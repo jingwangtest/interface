@@ -1,49 +1,43 @@
+#!/usr/bin/python
+#  _*_ coding: utf-8 _*_
 import logging
-import os
-from datetime import datetime
-import threading
+import os.path
+import time
 
 
-class Log:
-    def __init__(self):
-        global logPath, resultPath, proDir
-        proDir = readConfig.proDir
-        resultPath = os.path.join(proDir, "result")
-        # create result file if it doesn't exist
-        if not os.path.exists(resultPath):
-            os.mkdir(resultPath)
-        # defined test result file name by localtime
-        logPath = os.path.join(resultPath, str(datetime.now().strftime("%Y%m%d%H%M%S")))
-        # create test result file if it doesn't exist
-        if not os.path.exists(logPath):
-            os.mkdir(logPath)
-        # defined logger
-        self.logger = logging.getLogger()
-        # defined log level
-        self.logger.setLevel(logging.INFO)
+class Logger(object):
+    def __init__(self, logger):
+        # 1. 指定保存日志的文件路径，日志级别，以及调用文件
+        # 2. 将日志存入到指定的文件中
 
-        # defined handler
-        handler = logging.FileHandler(os.path.join(logPath, "output.log"))
-        # defined formatter
+        # 创建一个logger
+        self.logger = logging.getLogger(logger)
+        self.logger.setLevel(logging.DEBUG)
+
+        # 创建一个handler，用于写入日志文件
+        rq = time.strftime('%Y%m%d%H%M', time.localtime(time.time()))
+        # log_path = os.path.dirname(os.getcwd()) + '/Logs/'  # 项目根目录下/Logs 保存日志
+        # log_path = os.path.dirname(os.path.abspath('.')) + '/hning/logs/'
+        # log_path = os.path.abspath(os.path.join(os.getcwd(), "../.."))      #获取当前上级目录
+        # log_path = os.path.abspath(os.path.join(os.getcwd())) + '/Logs/'
+        log_path = "F:\\python_script\\interface" + '/result/'
+        # 如果case组织结构式 /testsuit/featuremodel/xxx.py ， 那么得到的相对路径的父路径就是项目根目录
+        log_name = log_path + rq + '.log'
+        fh = logging.FileHandler(log_name, encoding='utf-8')
+        fh.setLevel(logging.INFO)
+
+        # 再创建一个handler，用于输出到控制台
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.INFO)
+
+        # 定义handler的输出格式
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        # defined formatter
-        handler.setFormatter(formatter)
-        # add handler
-        self.logger.addHandler(handler)
+        fh.setFormatter(formatter)
+        ch.setFormatter(formatter)
 
+        # 给logger添加handler
+        self.logger.addHandler(fh)
+        self.logger.addHandler(ch)
 
-class MyLog:
-    log = None
-    mutex = threading.Lock()
-
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def get_log():
-        if MyLog.log is None:
-            MyLog.mutex.acquire()
-            MyLog.log = Log()
-            MyLog.mutex.release()
-
-        return MyLog.log
+    def getlog(self):
+        return self.logger

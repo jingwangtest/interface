@@ -6,7 +6,7 @@ import unittest
 from comm.login import testlogin_001
 from comm.sp_data import MySQL
 
-token = testlogin_001().test_login_001('token')
+token = testlogin_001().test_splogin('token')
 
 # 设置营销锦囊名称
 jnName_01 = ''.join(random.sample(['8', '6', '3', '2', '5', '6'], 4))

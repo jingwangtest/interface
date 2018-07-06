@@ -4,7 +4,7 @@ import json
 import unittest
 from comm.login import testlogin_001
 
-token = testlogin_001().test_login_001('token')
+token = testlogin_001().test_cplogin('token')
 
 
 class cp_zzjg_jsgl_01(unittest.TestCase):
@@ -49,12 +49,11 @@ class cp_zzjg_jsgl_01(unittest.TestCase):
         self.assertEqual(result_exp, result_act)
         print("新增部门管理成功")
 
-
     # 智营销平台-组织架构管理-部门员工管理-按已存在的姓名查询
     def test_a003_bmyg_serach(self):
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',
-            'token': token_01
+            'token': token
         }
         url = "http://cp.ejw.cn/cp/v1/partner/277/employees?jobNoOrEmpName=xcebdj&pageNo=1&pageSize=10&sort=%7B%22gmtCreate%22%3A%22desc%22%7D"
         result = requests.get(url, headers=headers).text
@@ -68,7 +67,7 @@ class cp_zzjg_jsgl_01(unittest.TestCase):
     def test_a004_bmyg_serach(self):
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',
-            'token': token_01
+            'token': token
         }
         url = "http://cp.ejw.cn/cp/v1/partner/277/employees?jobNoOrEmpName=xxxxx&pageNo=1&pageSize=10&sort={'gmtCreate': 'desc'}"
         print(url)

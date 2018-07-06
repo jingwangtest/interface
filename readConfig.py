@@ -15,9 +15,16 @@ class ReadConfig:
         value = self.cf.get("EMAIL", name)
         return value
 
-    def get_http(self, url):
-        value = self.cf.get("HTTP", url)
-        print(url)
+    def get_http_cp(self, url):
+        value = self.cf.get("HTTP", url_cp)
+        return value
+
+    def get_http_sp(self, url):
+        value = self.cf.get("HTTP", url_sp)
+        return value
+
+    def get_http_cu(self, url):
+        value = self.cf.get("HTTP", url_cu)
         return value
 
     def get_db_bi(self, database_bi):
