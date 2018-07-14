@@ -96,7 +96,7 @@ if __name__ == "__main__":
     case_path = "F:\\python_script\\interface\\test_case"
     dirs = os.listdir(case_path)
     # 匹配规则
-    # rule = "zpt*.py"
+    rule = "zpt*.py"
     # 1.加载用例
     # for rule in dirs:
     all_case = add_case(case_path, rule)
