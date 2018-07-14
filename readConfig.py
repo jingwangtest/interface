@@ -15,15 +15,15 @@ class ReadConfig:
         value = self.cf.get("EMAIL", name)
         return value
 
-    def get_http_cp(self, url):
+    def get_http_cp(self, url_cp):
         value = self.cf.get("HTTP", url_cp)
         return value
 
-    def get_http_sp(self, url):
+    def get_http_sp(self, url_sp):
         value = self.cf.get("HTTP", url_sp)
         return value
 
-    def get_http_cu(self, url):
+    def get_http_cu(self, url_cu):
         value = self.cf.get("HTTP", url_cu)
         return value
 

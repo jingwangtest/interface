@@ -5,6 +5,7 @@ import readConfig as readConfig
 localReadConfig = readConfig.ReadConfig()
 host = '192.168.150.33'
 port = 3306
+port_3308 = 3308
 username = 'root'
 password = 'hnjing&@test'
 charset = 'utf8'
@@ -27,7 +28,7 @@ class MySQL():
         mall1 = localReadConfig.get_db_mall1('database_mall1')
         conn = pymysql.connect(
             host=host,
-            port=port,
+            port=port_3308,
             user=username,
             passwd=password,
             db=mall1,
@@ -49,12 +50,12 @@ class MySQL():
         )
         return conn
 
-    # 连接ps1数据库----分支环境
+    # 连接ps1数据库----主干环境
     def connect_ps1(self, conn):
         ps1 = localReadConfig.get_db_ps1('database_ps1')
         conn = pymysql.connect(
             host=host,
-            port=port,
+            port=port_3308,
             user=username,
             passwd=password,
             db=ps1,
@@ -80,7 +81,7 @@ class MySQL():
         bi1 = localReadConfig.get_db_bi1('database_bi1')
         conn = pymysql.connect(
             host=host,
-            port=port,
+            port=port_3308,
             user=username,
             passwd=password,
             db=bi1,
@@ -106,7 +107,7 @@ class MySQL():
         platform1 = localReadConfig.get_db_platform1('database_platform1')
         conn = pymysql.connect(
             host=host,
-            port=port,
+            port=port_3308,
             user=username,
             passwd=password,
             db=platform1,
@@ -133,7 +134,7 @@ class MySQL():
         portal1 = localReadConfig.get_db_portal1('database_portal1')
         conn = pymysql.connect(
             host=host,
-            port=port,
+            port=port_3308,
             user=username,
             passwd=password,
             db=portal1,
@@ -159,7 +160,7 @@ class MySQL():
         os1 = localReadConfig.get_db_os1('database_os1')
         conn = pymysql.connect(
             host=host,
-            port=port,
+            port=port_3308,
             user=username,
             passwd=password,
             db=os1,

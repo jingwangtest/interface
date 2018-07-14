@@ -1,8 +1,8 @@
 import os
 from xlrd import open_workbook
 from xml.etree import ElementTree as ElementTree
-from interface.comm.Log import MyLog as Log
-from interface.readConfig import proDir
+from comm.Log import MyLog as Log
+from readConfig import proDir
 
 localConfigHttp = configHttp.ConfigHttp()
 log = Log.get_log()

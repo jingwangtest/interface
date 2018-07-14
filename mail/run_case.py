@@ -6,7 +6,9 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib
 import os
-import sys
+
+
+# import sys
 # reload(sys)
 # sys.setdefaultencoding('utf8')
 # 下面三行代码是python2里面为了防止中文乱码、python3可以去掉
@@ -27,16 +29,17 @@ def add_case(case_path, rule):
                                                    top_level_dir=None)
     # discover方法筛选出来的用例，循环添加到测试套件中
     for test_suite in discover:
-       for test_case in test_suite:
-           testunit.addTests(test_case)
-       print (testunit)
-       return testunit
+        for test_case in test_suite:
+            testunit.addTests(test_case)
+        print(testunit)
+        return testunit
+
 
 def run_case(all_case, report_path):
-    #执行所有的用例,并把结果写入测试报告
+    # 执行所有的用例,并把结果写入测试报告
     now = time.strftime("%Y_%m_%d %H_%M_%S")
-    report_abspath = os.path.join(report_path, now + "result.html")
-    #report_abspath = "D:\\web_project\\report\\"+now+"result.html"
+    report_abspath = os.path.join(report_path, now + "_result.html")
+    # report_abspath = "D:\\web_project\\report\\"+now+"_result.html"
     fp = open(report_abspath, "wb")
     runner = HTMLTestRunner.HTMLTestRunner(stream=fp,
                                            title=u'智平台,自动化测试结果如下：',
@@ -45,18 +48,20 @@ def run_case(all_case, report_path):
     runner.run(all_case)
     fp.close()
 
+
 def get_report_file(report_path):
-    #获取最新的测试报告
+    # 获取最新的测试报告
     lists = os.listdir(report_path)
     lists.sort(key=lambda fn: os.path.getmtime(os.path.join(report_path, fn)))
     lists_report = lists[-1]
     print(u'最新测试生成的报告：' + lists_report)
-    #找到最新生成的报告文件
+    # 找到最新生成的报告文件
     report_file = os.path.join(report_path, lists[-1])
     return report_file
 
+
 def send_mail(sender, psw, receiver, smtpserver, report_file):
-    #读取测试报告的内容
+    # 读取测试报告的内容
     with open(report_file, "rb") as f:
         mail_body = f.read()
         # 定义邮件内容
@@ -84,17 +89,19 @@ def send_mail(sender, psw, receiver, smtpserver, report_file):
         print('test report email has send out !')
 
 
-
 if __name__ == "__main__":
+
     # if上面是写好的四个函数，一般情况无需修改，只需改if以下的路径参数就行了
     # 测试用例的路径、匹配规则
-    case_path = "F:\\python_script\\hnjing\\interface\\comm"
+    case_path = "F:\\python_script\\interface\\test_case"
+    dirs = os.listdir(case_path)
     # 匹配规则
-    rule = "excel*.py"
+    # rule = "zpt*.py"
     # 1.加载用例
+    # for rule in dirs:
     all_case = add_case(case_path, rule)
     # 生成测试报告的路径
-    report_path = "F:\\python_script\\hnjing\\report"
+    report_path = "F:\\python_script\\interface\\result"
     # 2.执行用例
     run_case(all_case, report_path)
     #  获取最新的测试报告文件
@@ -107,11 +114,3 @@ if __name__ == "__main__":
     smtp_server = 'smtp.163.com'
     send_mail(sender, psw, receiver, smtp_server, report_file)
     # 4.最后一步发送报告
-
-
-
-
-
-
-
-

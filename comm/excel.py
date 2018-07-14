@@ -3,7 +3,7 @@ import xlrd
 import unittest
 import requests
 import json
-import interface.readConfig as readConfig
+import readConfig as readConfig
 
 localReadConfig = readConfig.ReadConfig()
 

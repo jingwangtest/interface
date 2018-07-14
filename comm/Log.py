@@ -20,7 +20,7 @@ class Logger(object):
         # log_path = os.path.dirname(os.path.abspath('.')) + '/hning/logs/'
         # log_path = os.path.abspath(os.path.join(os.getcwd(), "../.."))      #获取当前上级目录
         # log_path = os.path.abspath(os.path.join(os.getcwd())) + '/Logs/'
-        log_path = "F:\\python_script\\interface" + '/result/'
+        log_path = "F:\\python_script\\interface" + '/logs/'
         # 如果case组织结构式 /testsuit/featuremodel/xxx.py ， 那么得到的相对路径的父路径就是项目根目录
         log_name = log_path + rq + '.log'
         fh = logging.FileHandler(log_name, encoding='utf-8')
