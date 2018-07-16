@@ -86,7 +86,7 @@ class admin_yygl(unittest.TestCase):
         self.assertEqual(result_exp, result_act, msg="预期结果与实际结果不一致")
         global log
         log = Logger(logger="管理平台").getlog()
-        log.info("新增服务商成功pass")
+        log.info("新增服务商成功pass123456")
 
     # 运营管理-合作伙伴管理-新增供应商
     def test_a002_yygl(self):
