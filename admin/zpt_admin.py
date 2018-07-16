@@ -15,6 +15,7 @@ headers = {
     'token': token
 }
 
+
 class admin_yygl(unittest.TestCase):
     # 运营管理-合作伙伴管理-新增服务商
     def test_a001_yygl(self):
@@ -85,7 +86,7 @@ class admin_yygl(unittest.TestCase):
         self.assertEqual(result_exp, result_act, msg="预期结果与实际结果不一致")
         global log
         log = Logger(logger="管理平台").getlog()
-        log.info("新增服务商成功ABCDEFG111abcd")
+        log.info("新增服务商成功pass123456")
 
     # 运营管理-合作伙伴管理-新增供应商
     def test_a002_yygl(self):
@@ -233,7 +234,8 @@ class admin_yygl(unittest.TestCase):
 
         conn = MySQL().connect_portal1('conn')
         cur = conn.cursor()
-        cur.execute("select partner_id,partner_name,area,address,phone from partner where `status`=0 order by gmt_create desc")
+        cur.execute(
+            "select partner_id,partner_name,area,address,phone from partner where `status`=0 order by gmt_create desc")
         cur_data = cur.fetchone()[0:5]
         print(cur_data)
         partner_id = str(cur_data[0])
@@ -309,7 +311,7 @@ class admin_yygl(unittest.TestCase):
         result_exp = 200
         result_act = shtg.status_code
         self.assertEqual(result_exp, result_act, msg="企业审核不通过")
-        log.info("企业"+partner_name+"停用成功")
+        log.info("企业" + partner_name + "停用成功")
 
     # 运营管理-企业客户管理-资质模板管理-新增
     def test_c001_search(self):
@@ -363,7 +365,7 @@ class admin_yygl(unittest.TestCase):
         product_id = cur_data[1]
         print(verify_id, product_id)
         url_01 = 'http://admin.ejw.cn/platform/v1/productverify/'
-        url = url_01 + verify_id+'?curEmpId=1720'
+        url = url_01 + verify_id + '?curEmpId=1720'
         paramas = {"status": 1}
         result = requests.put(url, data=json.dumps(paramas), headers=headers)
         result_exp = 200
