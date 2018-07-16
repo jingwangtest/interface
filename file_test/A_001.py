@@ -16,7 +16,7 @@ headers = {
     'token': token
 }
 rq = time.strftime('%Y%m%d%H%M', time.localtime(time.time()))
-log_path = os.path.abspath(os.path.join(os.getcwd(), "..", 'logs'))+"\\"
+log_path = os.path.abspath(os.path.join(os.getcwd(), "..", 'logs')) + "\\"
 log_name = log_path + rq + '.log'
 log = Logger(logger="管理平台").getlog()
 log.info("打印日志路径")
@@ -43,8 +43,6 @@ print(log_path, log_name)
 #         result_act = int(totalCount)
 #         result_exp = 1
 #         self.assertEqual(result_exp, result_act, "查询的日志结果不一致")
-
-
 
 
 if __name__ == '__main__':

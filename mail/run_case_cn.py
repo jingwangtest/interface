@@ -1,11 +1,12 @@
 # coding=utf-8
 import unittest
 import time
-import HTMLTestRunner
+import HTMLTestRunner_cn
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib
 import os
+
 
 # import sys
 # reload(sys)
@@ -24,17 +25,22 @@ def add_case(case_path, rule):
                                                    top_level_dir=None)
     return discover
 
+
 def run_case(all_case, report_path):
     # 执行所有的用例,并把结果写入测试报告
     now = time.strftime("%Y_%m_%d %H_%M_%S")
     report_abspath = os.path.join(report_path, now + "_result.html")
     fp = open(report_abspath, "wb")
-    runner = HTMLTestRunner.HTMLTestRunner(stream=fp,
-                                           title=u'智平台,自动化测试结果如下：',
-                                           description=u'用例执行情况：')
+    # runner = HTMLTestRunner.HTMLTestRunner(stream=fp,
+    #                                        title=u'智平台,自动化测试结果如下：',
+    #                                        description=u'用例执行情况：')
+    runner = HTMLTestRunner_cn.HTMLTestRunner(stream=fp,
+                                              title=u'智平台,自动化测试结果如下：',
+                                              description=u'用例执行情况：', verbosity=2, retry=2, save_last_try=True)
     # 调用add_case函数返回值
     runner.run(all_case)
     fp.close()
+
 
 def get_report_file(report_path):
     # 获取最新的测试报告
@@ -45,6 +51,7 @@ def get_report_file(report_path):
     # 找到最新生成的报告文件
     report_file = os.path.join(report_path, lists[-1])
     return report_file
+
 
 def send_mail(sender, psw, receiver, smtpserver, report_file):
     # 读取测试报告的内容
@@ -79,7 +86,7 @@ if __name__ == "__main__":
     # if上面是写好的四个函数，一般情况无需修改，只需改if以下的路径参数就行了
     # 测试用例的路径、匹配规则
     # case_path = "F:\\python_script\\interface\\test_case"
-    case_path = os.path.abspath(os.path.join(os.getcwd(), "..", "test_case"))
+    case_path = os.path.abspath(os.path.join(os.getcwd(), "..", "cp"))
     # 匹配规则
     rule = "zpt*.py"
     # 1.加载用例
