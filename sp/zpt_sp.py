@@ -211,25 +211,30 @@ class sp_dpgl_01(unittest.TestCase):
     # 店铺管理-产品管理-供应商授权管理-全部-提交合同
     def test_c007_product_verify(self):
         # 连接ps数据库
-        # 连接ps数据库
         conn1 = MySQL().connect_platform1('conn')
         cur1 = conn1.cursor()
         cur1.execute(
-            "select auth_id, record_id from product_auth t where t.sp_id='190' and t.`status`=0;")
-        auth_id = cur1.fetchone()[0]
-        record_id = cur1.fetchone()[1]
-        log.info("授权审核的uuid：" + auth_id)
-        url_01 = "http://sp.ejw.cn/platform/v1/productauth/"
-        url = url_01+str(record_id)+"?curEmpId=1721"
-        print(url)
-        params = {"contractId": auth_id, "contractName": "script.rar",
-                  "contractBeginDate": "2018-07-13T00:00:00+08:00", "contractValidDate": "2018-07-31T23:59:59+08:00",
-                  "contractSpFile": "https://bj.bcebos.com/v1/hnjing-test/890d51e8ec26441da124f4f009cff36f.rar?authorization=bce-auth-v1%2Fed6cb82c3c054636aec25bdbc65d7c10%2F2018-07-13T01%3A51%3A01Z%2F-1%2F%2Ffcdc2fb8500561d8a195514e0d324075dd7c820a1fe7706defcd281460680773"}
-        result_act = requests.put(url, data=json.dumps(params), headers=headers)
-        result_exp = 1
-        log_act.info(result_act)
-        self.assertEqual(result_exp, int(result_act.text), msg="数据异常，产品授权不通过")
-        log.info("产品授权审核通过")
+            "select auth_id, record_id from product_auth t where t.sp_id='190' and t.`status`=0")
+        try:
+            result_data = cur1.fetchone()[0:2]
+            auth_id = result_data[0]
+            record_id = result_data[1]
+            print(auth_id, record_id)
+            url_01 = "http://sp.ejw.cn/platform/v1/productauth/"
+            url = url_01 + str(record_id) + "?curEmpId=1721"
+            print(url)
+            params = {"contractId": auth_id, "contractName": "script.rar",
+                      "contractBeginDate": "2018-07-13T00:00:00+08:00",
+                      "contractValidDate": "2018-07-31T23:59:59+08:00",
+                      "contractSpFile": "https://bj.bcebos.com/v1/hnjing-test/890d51e8ec26441da124f4f009cff36f.rar?authorization=bce-auth-v1%2Fed6cb82c3c054636aec25bdbc65d7c10%2F2018-07-13T01%3A51%3A01Z%2F-1%2F%2Ffcdc2fb8500561d8a195514e0d324075dd7c820a1fe7706defcd281460680773"}
+            result_act = requests.put(url, data=json.dumps(params), headers=headers)
+            result_exp = 1
+            log_act.info(result_act)
+            self.assertEqual(result_exp, int(result_act.text), msg="数据异常，产品授权不通过")
+            log.info("产品授权审核通过")
+            log.info("没有需要提交的合同")
+        except TypeError:
+            log.info("查询的数据合同为空")
 
     # 店铺管理-产品管理-供应商授权管理-查询（不存在的）
     def test_c008_product_verify(self):

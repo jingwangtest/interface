@@ -21,7 +21,7 @@ headers = {
 }
 
 
-class sp_dpgl_01(unittest.TestCase):
+class test_sp_dpgl_01(unittest.TestCase):
     # 店铺管理-案例管理-新增角色
     def test_a001_role_add(self):
         # 设置案例名称

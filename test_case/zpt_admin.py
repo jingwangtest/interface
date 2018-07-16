@@ -7,6 +7,7 @@ from comm.login import testlogin_001
 from comm.public_data import MySQL
 from comm.Log import Logger
 from urllib.parse import quote
+import time
 
 # 请求头信息
 token = testlogin_001().test_adminlogin('token')
@@ -15,9 +16,11 @@ headers = {
     'token': token
 }
 
-class admin_yygl(unittest.TestCase):
+class test_admin_yygl(unittest.TestCase):
     # 运营管理-合作伙伴管理-新增服务商
     def test_a001_yygl(self):
+        global log
+        log = Logger(logger="管理平台").getlog()
         # 随机生成企业名称
         prodctName_01 = ''.join(random.sample(['8', '6', '3', '2', '5', '6'], 4))
         prodctName_02 = '企业名称auto'
@@ -83,8 +86,6 @@ class admin_yygl(unittest.TestCase):
         result_act = fws_test.status_code
         # print(fws_test.text)
         self.assertEqual(result_exp, result_act, msg="预期结果与实际结果不一致")
-        global log
-        log = Logger(logger="管理平台").getlog()
         log.info("新增服务商成功ABCDEFG111abcd")
 
     # 运营管理-合作伙伴管理-新增供应商
@@ -339,7 +340,7 @@ class admin_yygl(unittest.TestCase):
         if cur_data is None:
             # print("执行A部分")
             self.assertNotEqual(result_exp, cur_data, msg="没有需要授权的产品")
-
+            log.info("没有需要授权的产品")
         else:
             # print("执行B部分")
             record_id = cur_data[0]
@@ -413,6 +414,7 @@ class admin_yygl(unittest.TestCase):
         result_act = fws_test.text
         self.assertIn(keywords, result_act, "实际结果没有此用户名称")
         log.info("没有此用户信息")
+        time.sleep(5)
 
 
 if __name__ == '__main__':

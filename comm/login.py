@@ -76,7 +76,7 @@ class testlogin_001():
 
     # admin公共登陆组件
     def test_adminlogin(self, token):
-        params = {'mobilePhone': '13025406605', 'password': '123456', 'remember': 'true', 'siteName': 'main'}
+        params = {'mobilePhone': '18600000000', 'password': '123456', 'remember': 'true', 'siteName': 'main'}
         url = "http://admin.ejw.cn/api/login"
 
         headers = {
