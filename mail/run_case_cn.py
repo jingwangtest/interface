@@ -29,6 +29,9 @@ def add_case(case_path, rule):
 def run_case(all_case, report_path):
     # 执行所有的用例,并把结果写入测试报告
     now = time.strftime("%Y_%m_%d %H_%M_%S")
+    # 如果不存在这个report文件夹，就自动创建一个
+    if not os.path.exists(report_path):
+        os.mkdir(report_path)
     report_abspath = os.path.join(report_path, now + "_result.html")
     fp = open(report_abspath, "wb")
     # runner = HTMLTestRunner.HTMLTestRunner(stream=fp,

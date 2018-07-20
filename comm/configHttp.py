@@ -1,6 +1,6 @@
 import requests
 import unittest
-import interface.readConfig as readConfig
+import readConfig as readConfig
 import json
 
 # from interface.comm.Log import MyLog as Log
