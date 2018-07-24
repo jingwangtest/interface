@@ -19,6 +19,8 @@ headers = {
 class admin_yygl(unittest.TestCase):
     # 运营管理-合作伙伴管理-新增服务商
     def test_a001_yygl(self):
+        global log
+        log = Logger(logger="管理平台").getlog()
         # 随机生成企业名称
         prodctName_01 = ''.join(random.sample(['8', '6', '3', '2', '5', '6'], 4))
         prodctName_02 = '企业名称auto'
@@ -84,8 +86,6 @@ class admin_yygl(unittest.TestCase):
         result_act = fws_test.status_code
         # print(fws_test.text)
         self.assertEqual(result_exp, result_act, msg="预期结果与实际结果不一致")
-        global log
-        log = Logger(logger="管理平台").getlog()
         log.info("新增服务商成功pass123456")
 
     # 运营管理-合作伙伴管理-新增供应商
@@ -271,47 +271,47 @@ class admin_yygl(unittest.TestCase):
         self.assertEqual(result_exp, result_act, msg='审核原因：数据库已存在相同用户企业或其它参数错误')
         log.info("企业客户管理-合作伙伴管理-企业审核成功")
 
-    # 运营管理-企业客户管理-合作伙伴管理-企业审核通过-停用
-    def test_b004_search(self):
-        conn = MySQL().connect_os1('conn')
-        cur = conn.cursor()
-        cur.execute("select partner_id, partner_name from partner where `status`=1 and partner_type=0001")
-        cur_data = cur.fetchone()[0:2]
-        # print(cur_data)
-        partner_id = str(cur_data[0])
-        partner_name = cur_data[1]
-        print(partner_id, partner_name)
-        paramas = {"status": 0}
-        url_01 = 'http://admin.ejw.cn/platform/v1/partner/'
-        url = url_01 + partner_id + '/status'
-        # 发送服务商接口请求
-        shtg = requests.put(url, data=json.dumps(paramas), headers=headers)
-        # requests.get("http://admin.ejw.cn/os/v1/partners?sort=%7B%22gmtCreate%22%3A%22desc%22%7D&pageSize=10&pageNo=1&partnerType=0001%2C0011%2C0101%2C0111", headers=headers)
-        result_act = shtg.status_code
-        result_exp = 200
-        self.assertEqual(result_exp, result_act)
-        log.info("企业客户管理-合作伙伴管理-企业审核通过-停用成功")
+    # # 运营管理-企业客户管理-合作伙伴管理-企业审核通过-停用
+    # def test_b004_search(self):
+    #     conn = MySQL().connect_os1('conn')
+    #     cur = conn.cursor()
+    #     cur.execute("select partner_id, partner_name from partner where `status`=1 and partner_type=0001")
+    #     cur_data = cur.fetchone()[0:2]
+    #     # print(cur_data)
+    #     partner_id = str(cur_data[0])
+    #     partner_name = cur_data[1]
+    #     print(partner_id, partner_name)
+    #     paramas = {"status": 0}
+    #     url_01 = 'http://admin.ejw.cn/platform/v1/partner/'
+    #     url = url_01 + partner_id + '/status'
+    #     # 发送服务商接口请求
+    #     shtg = requests.put(url, data=json.dumps(paramas), headers=headers)
+    #     # requests.get("http://admin.ejw.cn/os/v1/partners?sort=%7B%22gmtCreate%22%3A%22desc%22%7D&pageSize=10&pageNo=1&partnerType=0001%2C0011%2C0101%2C0111", headers=headers)
+    #     result_act = shtg.status_code
+    #     result_exp = 200
+    #     self.assertEqual(result_exp, result_act)
+    #     log.info("企业客户管理-合作伙伴管理-企业审核通过-停用成功")
 
-    # 运营管理-企业客户管理-合作伙伴管理-企业审核通过-启用
-    def test_b005_search(self):
-        conn = MySQL().connect_os1('conn')
-        cur = conn.cursor()
-        cur.execute("select partner_id, partner_name from partner where `status`=0 and partner_type=0001")
-        cur_data = cur.fetchone()[0:2]
-        # print(cur_data)
-        partner_id = str(cur_data[0])
-        partner_name = cur_data[1]
-        print(partner_id, partner_name)
-        paramas = {"status": 1}
-        url_01 = 'http://admin.ejw.cn/platform/v1/partner/'
-        url = url_01 + partner_id + '/status'
-        # 发送服务商接口请求
-        shtg = requests.put(url, data=json.dumps(paramas), headers=headers)
-        # requests.get("http://admin.ejw.cn/os/v1/partners?sort=%7B%22gmtCreate%22%3A%22desc%22%7D&pageSize=10&pageNo=1&partnerType=0001%2C0011%2C0101%2C0111", headers=headers)
-        result_exp = 200
-        result_act = shtg.status_code
-        self.assertEqual(result_exp, result_act, msg="企业审核不通过")
-        log.info("企业" + partner_name + "停用成功")
+    # # 运营管理-企业客户管理-合作伙伴管理-企业审核通过-启用
+    # def test_b005_search(self):
+    #     conn = MySQL().connect_os1('conn')
+    #     cur = conn.cursor()
+    #     cur.execute("select partner_id, partner_name from partner where `status`=0 and partner_type=0001")
+    #     cur_data = cur.fetchone()[0:2]
+    #     print(cur_data)
+    #     partner_id = str(cur_data[0])
+    #     partner_name = cur_data[1]
+    #     print(partner_id, partner_name)
+    #     paramas = {"status": 1}
+    #     url_01 = 'http://admin.ejw.cn/platform/v1/partner/'
+    #     url = url_01 + partner_id + '/status'
+    #     # 发送服务商接口请求
+    #     shtg = requests.put(url, data=json.dumps(paramas), headers=headers)
+    #     # requests.get("http://admin.ejw.cn/os/v1/partners?sort=%7B%22gmtCreate%22%3A%22desc%22%7D&pageSize=10&pageNo=1&partnerType=0001%2C0011%2C0101%2C0111", headers=headers)
+    #     result_exp = 200
+    #     result_act = shtg.status_code
+    #     self.assertEqual(result_exp, result_act, msg="企业审核不通过")
+    #     log.info("企业" + partner_name + "停用成功")
 
     # 运营管理-企业客户管理-资质模板管理-新增
     def test_c001_search(self):
@@ -355,7 +355,7 @@ class admin_yygl(unittest.TestCase):
             self.assertEqual(result_exp, result_act, msg="产品授权-审核不通过")
             log.info("产品授权-审核通过")
 
-    # 产品管理-产品审核-待审核
+    # 产品运营-产品审核-待审核
     def test_d002_spsq_dsh(self):
         conn = MySQL().connect_platform1('conn')
         cur = conn.cursor()

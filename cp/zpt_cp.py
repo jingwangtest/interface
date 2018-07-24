@@ -10,7 +10,7 @@ from comm.Log import Logger
 localReadConfig = readConfig.ReadConfig()
 token_01 = testlogin_001().test_cplogin('token')
 
-class Cpgl_cpsxj(unittest.TestCase):
+class Cpgl_供应商平台(unittest.TestCase):
     # 验证登陆是否成功
     def test_a001_login(self):
         params = {'mobilePhone': '15574841920', 'password': '123456', 'remember': 'true', 'siteName': 'main'}
