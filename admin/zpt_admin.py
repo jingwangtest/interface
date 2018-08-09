@@ -21,140 +21,208 @@ class admin_yygl(unittest.TestCase):
     def test_a001_yygl(self):
         global log
         log = Logger(logger="管理平台").getlog()
-        # 随机生成企业名称
-        prodctName_01 = ''.join(random.sample(['8', '6', '3', '2', '5', '6'], 4))
-        prodctName_02 = '企业名称auto'
-        prodctName = prodctName_02 + prodctName_01
+        name_01 = "湖南省娄底市涟钢振兴环保科技公司"
+        conn_partner = MySQL().connect_os1('conn')
+        cur1 = conn_partner.cursor()
+        cur1.execute('select partner_id from partner where partner_type = 0101 and partner_name ="' + name_01 + '"')
+        par_result = cur1.fetchone()
 
-        # 随机生成社会信用代码
-        uscCode_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 10))
-        uscCode_02 = '43062419'
-        uscCode = uscCode_01 + uscCode_02
-        url = 'http://admin.ejw.cn/platform/v1/partnerall'
-        parms = {
-            "partner": {
-                "partnerType": "0101",
-                "partnerName": prodctName,
-                "area": "湖南/长沙",
-                "address": "岳麓",
-                "phone": "0371-86241125",
-                "level": 5,
-                "detail": "im"
-            },
-            "partnerBusiness": {
-                "uscCode": uscCode,
-                "beginDate": "2014-01-06",
-                "validDate": "2064-01-05",
-                "companyType": "有限责任公司(自然人投资或控股)",
-                "registAddress": "长沙市开福区车站北路649号天都大厦第1幢N单元21层21022号房",
-                "legalPerson": "欧阳凤贵",
-                "registAuthority": "长沙市工商行政管理局开福分局",
-                "approvalDate": "2016-12-27",
-                "registStatus": "存续（在营、开业、在册）",
-                "registCapital": 1000,
-                "scope": "智能化技术研发；工程和技术研究和试验发展；网络集成系统建设、维护、运营、租赁；"
-                         "计算机网络系统工程服务；电气设备服务；",
-                "legalPersonIdcode": "430624199802031256"
-            },
-            "partnerExt": {
-                "standardIndustry": "612",
-                "category": "44"
-            },
-            "partnerQualifys": [{
-                "qualifyType": 1,
-                "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/310327dcbb4e4f6da4955aa803677bf7.jpg",
-                "qualifyName": "营业执照",
-                "qualifyBeginDate": "2014-01-06",
-                "qualifyValidDate": "2064-01-05"
-            }, {
-                "qualifyType": 2,
-                "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/1d058c38f44741e0a3183ebe488302c4.jpg,https://bj.bcebos.com/v1/hnjing-test/d18a5950035f4c75815a371289d23a45.jpg",
-                "qualifyName": "法人身份证",
-                "qualifyBeginDate": "2018-07-09",
-                "qualifyValidDate": "2018-07-31"
-            }],
-            "employees": {
-                "empName": "测试",
-                "phone": "15812205665",
-                "email": "15814405932@139.com"
-            }
-        }
-        values = json.dumps(parms)
-        # 发送服务商接口请求
-        fws_test = requests.post(url, data=values, headers=headers)
-        result_exp = 200
-        result_act = fws_test.status_code
-        # print(fws_test.text)
-        self.assertEqual(result_exp, result_act, msg="预期结果与实际结果不一致")
-        log.info("新增服务商成功pass123456")
+        if par_result == None:
+            # 随机生成社会信用代码
+            uscCode_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 10))
+            uscCode_02 = '43062419'
+            uscCode = uscCode_01 + uscCode_02
+            paramas = {
+                "partner": {"partnerType": "0101", "partnerName": name_01, "area": "湖南/长沙", "address": "麓谷",
+                            "phone": "0731-86241871", "level": 5, "detail": "楼主"},
+                "partnerBusiness": {"uscCode": "91431300187402930W", "beginDate": "1993-04-13",
+                                    "validDate": "2999-12-31", "companyType": "集体所有制",
+                                    "registAddress": "娄底市娄星区洪家洲振兴路（涟钢检修厂旁）", "legalPerson": "谢国阳",
+                                    "registAuthority": "娄底市工商行政管理局", "approvalDate": "2016-03-28",
+                                    "registStatus": "存续（在营、开业、在册）", "registCapital": 303,
+                                    "scope": "环保设备设计、制造、安装，铆焊机械零配件加工，拉丝，机电设备安装、维修；工业废料回收开发利用，五金、化工产品（不含专控危险品）、金属材料销售；转运装卸、劳务输出（限涟钢厂内）；废油回收加工。软化丝、废钢切割，防腐工程，建筑材料，政策允许的矿产品、金属材料；炉料生产销售。",
+                                    "legalPersonIdcode": uscCode},
+                "partnerExt": {"standardIndustry": "552", "category": "44"}, "partnerQualifys": [{"qualifyType": 1,
+                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/b5f4b5ed46474606b7c603084fb140cd.jpg",
+                                                                                                  "qualifyName": "营业执照",
+                                                                                                  "qualifyBeginDate": "1993-04-13",
+                                                                                                  "qualifyValidDate": "2999-12-31"},
+                                                                                                 {"qualifyType": 2,
+                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/21d5c46b4c7543e59be30d435fa7c9c5.jpg,https://bj.bcebos.com/v1/hnjing-test/8288ec28360f4499a76879ddd3ae5d94.jpg",
+                                                                                                  "qualifyName": "法人身份证",
+                                                                                                  "qualifyBeginDate": "2018-08-30",
+                                                                                                  "qualifyValidDate": "2018-09-30"}],
+                "employees": {"empName": "测试", "phone": "15814405932", "email": "15814405932@139.com"}}
+            url = 'http://admin.ejw.cn/platform/v1/partnerall?curEmpId=1699'
+            # 发送服务商接口请求
+            qykh_test_01 = requests.post(url, data=json.dumps(paramas), headers=headers)
+            print(qykh_test_01.text)
+            result_act = qykh_test_01.status_code
+            result_exp = 200
+            # 判断当前返回码及字段值
+            self.assertEqual(result_exp, result_act, msg='失败原因：已存在相同用户企业或其它参数错误')
+            log.info("企业客户管理-合作伙伴管理-新增服务商成功")
+
+        else:
+            # 获取partner_id的值
+            partner_id = par_result[0]
+            name_id = str(partner_id)
+            print(name_id)
+            # 获取emp_id的值
+            cur1.execute('select emp_id from employee where partner_id = "' + name_id + '"')
+            results_data_01 = cur1.fetchone()
+            # print(results_data_01)
+            employee_id = results_data_01[0]
+            emp_id = str(employee_id)
+            print(emp_id)
+            # 删除除长沙艾客美食文化传播有限公司相关联的数据用户信息
+            cur1.execute('delete from employee_link_role where emp_id = "' + emp_id + '"')
+            cur1.execute('delete from employee where partner_id = "' + name_id + '"')
+            cur1.execute('delete from partner_business where partner_id= "' + name_id + '"')
+            cur1.execute('delete from partner_ext where partner_id= "' + name_id + '"')
+            cur1.execute('delete from partner_qualify where partner_id= "' + name_id + '"')
+            cur1.execute('delete from partner where partner_name="' + name_01 + '"')
+            conn_partner.commit()
+            cur1.close()
+            conn_partner.close()
+            # 随机生成社会信用代码
+            uscCode_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 10))
+            uscCode_02 = '43062419'
+            uscCode = uscCode_01 + uscCode_02
+            paramas = {
+                "partner": {"partnerType": "0101", "partnerName": name_01, "area": "湖南/长沙", "address": "麓谷",
+                            "phone": "0731-86241871", "level": 5, "detail": "楼主"},
+                "partnerBusiness": {"uscCode": "91431300187402930W", "beginDate": "1993-04-13",
+                                    "validDate": "2999-12-31", "companyType": "集体所有制",
+                                    "registAddress": "娄底市娄星区洪家洲振兴路（涟钢检修厂旁）", "legalPerson": "谢国阳",
+                                    "registAuthority": "娄底市工商行政管理局", "approvalDate": "2016-03-28",
+                                    "registStatus": "存续（在营、开业、在册）", "registCapital": 303,
+                                    "scope": "环保设备设计、制造、安装，铆焊机械零配件加工，拉丝，机电设备安装、维修；工业废料回收开发利用，五金、化工产品（不含专控危险品）、金属材料销售；转运装卸、劳务输出（限涟钢厂内）；废油回收加工。软化丝、废钢切割，防腐工程，建筑材料，政策允许的矿产品、金属材料；炉料生产销售。",
+                                    "legalPersonIdcode": uscCode},
+                "partnerExt": {"standardIndustry": "552", "category": "44"}, "partnerQualifys": [{"qualifyType": 1,
+                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/b5f4b5ed46474606b7c603084fb140cd.jpg",
+                                                                                                  "qualifyName": "营业执照",
+                                                                                                  "qualifyBeginDate": "1993-04-13",
+                                                                                                  "qualifyValidDate": "2999-12-31"},
+                                                                                                 {"qualifyType": 2,
+                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/21d5c46b4c7543e59be30d435fa7c9c5.jpg,https://bj.bcebos.com/v1/hnjing-test/8288ec28360f4499a76879ddd3ae5d94.jpg",
+                                                                                                  "qualifyName": "法人身份证",
+                                                                                                  "qualifyBeginDate": "2018-09-30",
+                                                                                                  "qualifyValidDate": "2018-09-30"}],
+                "employees": {"empName": "测试", "phone": "15814405932", "email": "15814405932@139.com"}}
+            url = 'http://admin.ejw.cn/platform/v1/partnerall?curEmpId=1699'
+            # 发送服务商接口请求
+            qykh_test_01 = requests.post(url, data=json.dumps(paramas), headers=headers)
+            print(qykh_test_01.text)
+            result_act = qykh_test_01.status_code
+            result_exp = 200
+            # 判断当前返回码及字段值
+            self.assertEqual(result_exp, result_act, msg='已存在：相同用户企业或其它参数错误')
+            log.info("企业客户管理-合作伙伴管理-新增服务商成功")
 
     # 运营管理-合作伙伴管理-新增供应商
     def test_a002_yygl(self):
-        # 随机生成企业名称
-        prodctName_01 = ''.join(random.sample(['8', '6', '3', '2', '5', '6'], 6))
-        prodctName_02 = '企业名称auto'
-        prodctName = prodctName_02 + prodctName_01
+        global log
+        log = Logger(logger="管理平台").getlog()
+        name_01 = "林丽娟自创供应商dg"
+        conn_partner = MySQL().connect_os1('conn')
+        cur1 = conn_partner.cursor()
+        cur1.execute('select partner_id from partner where partner_name ="' + name_01 + '"')
+        par_result = cur1.fetchone()
 
-        # 随机生成社会信用代码
-        uscCode_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 10))
-        uscCode_02 = '43062419'
-        uscCode = uscCode_01 + uscCode_02
-        url = 'http://admin.ejw.cn/platform/v1/partnerall'
-        parms = {
-            "partner": {
-                "partnerType": "0010",
-                "partnerName": prodctName,
-                "area": "湖南/长沙",
-                "address": "岳麓",
-                "phone": "0371-86241125",
-                "level": 5,
-                "detail": "im"
-            },
-            "partnerBusiness": {
-                "uscCode": uscCode,
-                "beginDate": "2014-01-06",
-                "validDate": "2064-01-05",
-                "companyType": "有限责任公司(自然人投资或控股)",
-                "registAddress": "长沙市开福区车站北路649号天都大厦第1幢N单元21层21022号房",
-                "legalPerson": "欧阳凤贵",
-                "registAuthority": "长沙市工商行政管理局开福分局",
-                "approvalDate": "2016-12-27",
-                "registStatus": "存续（在营、开业、在册）",
-                "registCapital": 1000,
-                "scope": "智能化技术研发；工程和技术研究和试验发展；",
-                "legalPersonIdcode": "430624199802031256"
-            },
-            "partnerExt": {
-                "standardIndustry": "612",
-                "category": "44"
-            },
-            "partnerQualifys": [{
-                "qualifyType": 1,
-                "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/310327dcbb4e4f6da4955aa803677bf7.jpg",
-                "qualifyName": "营业执照",
-                "qualifyBeginDate": "2014-01-06",
-                "qualifyValidDate": "2064-01-05"
-            }, {
-                "qualifyType": 2,
-                "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/1d058c38f44741e0a3183ebe488302c4.jpg,https://bj.bcebos.com/v1/hnjing-test/d18a5950035f4c75815a371289d23a45.jpg",
-                "qualifyName": "法人身份证",
-                "qualifyBeginDate": "2018-07-09",
-                "qualifyValidDate": "2018-07-31"
-            }],
-            "employees": {
-                "empName": "测试",
-                "phone": "15812205665",
-                "email": "15814405932@139.com"
-            }
-        }
-        values = json.dumps(parms)
-        # 发送服务商接口请求
-        fws_test = requests.post(url, data=values, headers=headers)
-        result_exp = 200
-        result_act = fws_test.status_code
-        # print(fws_test.text)
-        self.assertEqual(result_exp, result_act, msg="供应商新增失败")
-        log.info("服务商已新增成功")
+        if par_result == None:
+            # 随机生成社会信用代码
+            uscCode_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 10))
+            uscCode_02 = '43062419'
+            uscCode = uscCode_01 + uscCode_02
+            paramas = {
+                "partner": {"partnerType": "0010", "partnerName": name_01, "area": "湖南/长沙", "address": "麓谷",
+                            "phone": "0731-86241871", "level": 5, "detail": "楼主"},
+                "partnerBusiness": {"uscCode": "91431300187402930W", "beginDate": "1993-04-13",
+                                    "validDate": "2999-12-31", "companyType": "集体所有制",
+                                    "registAddress": "娄底市娄星区洪家洲振兴路（涟钢检修厂旁）", "legalPerson": "谢国阳",
+                                    "registAuthority": "娄底市工商行政管理局", "approvalDate": "2016-03-28",
+                                    "registStatus": "存续（在营、开业、在册）", "registCapital": 303,
+                                    "scope": "环保设备设计、制造、安装，铆焊机械零配件加工，拉丝，机电设备安装、维修；工业废料回收开发利用，五金、化工产品（不含专控危险品）、金属材料销售；转运装卸、劳务输出（限涟钢厂内）；废油回收加工。软化丝、废钢切割，防腐工程，建筑材料，政策允许的矿产品、金属材料；炉料生产销售。",
+                                    "legalPersonIdcode": uscCode},
+                "partnerExt": {"standardIndustry": "552", "category": "44"}, "partnerQualifys": [{"qualifyType": 1,
+                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/b5f4b5ed46474606b7c603084fb140cd.jpg",
+                                                                                                  "qualifyName": "营业执照",
+                                                                                                  "qualifyBeginDate": "1993-04-13",
+                                                                                                  "qualifyValidDate": "2999-12-31"},
+                                                                                                 {"qualifyType": 2,
+                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/21d5c46b4c7543e59be30d435fa7c9c5.jpg,https://bj.bcebos.com/v1/hnjing-test/8288ec28360f4499a76879ddd3ae5d94.jpg",
+                                                                                                  "qualifyName": "法人身份证",
+                                                                                                  "qualifyBeginDate": "2018-09-30",
+                                                                                                  "qualifyValidDate": "2018-09-30"}],
+                "employees": {"empName": "测试", "phone": "15814405932", "email": "15814405932@139.com"}}
+            url = 'http://admin.ejw.cn/platform/v1/partnerall?curEmpId=1699'
+            # 发送服务商接口请求
+            qykh_test_01 = requests.post(url, data=json.dumps(paramas), headers=headers)
+            print(qykh_test_01.text)
+            result_act = qykh_test_01.status_code
+            result_exp = 200
+            # 判断当前返回码及字段值
+            self.assertEqual(result_exp, result_act, msg='审核原因：已存在相同用户企业或其它参数错误')
+            log.info("企业客户管理-合作伙伴管理-供应商新增成功")
+
+        else:
+            # 获取partner_id的值
+            partner_id = par_result[0]
+            name_id = str(partner_id)
+            print(name_id)
+            # 获取emp_id的值
+            cur1.execute('select emp_id from employee where partner_id = "' + name_id + '"')
+            results_data_01 = cur1.fetchone()
+            # print(results_data_01)
+            employee_id = results_data_01[0]
+            emp_id = str(employee_id)
+            print(emp_id)
+            # 删除除长沙艾客美食文化传播有限公司相关联的数据用户信息
+            cur1.execute('delete from employee_link_role where emp_id = "' + emp_id + '"')
+            cur1.execute('delete from employee where partner_id = "' + name_id + '"')
+            cur1.execute('delete from partner_business where partner_id= "' + name_id + '"')
+            cur1.execute('delete from partner_ext where partner_id= "' + name_id + '"')
+            cur1.execute('delete from partner_qualify where partner_id= "' + name_id + '"')
+            cur1.execute('delete from partner where partner_name="' + name_01 + '"')
+            conn_partner.commit()
+            cur1.close()
+            conn_partner.close()
+            # 随机生成社会信用代码
+            uscCode_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 10))
+            uscCode_02 = '43062419'
+            uscCode = uscCode_01 + uscCode_02
+            paramas = {
+                "partner": {"partnerType": "0101", "partnerName": name_01, "area": "湖南/长沙", "address": "麓谷",
+                            "phone": "0731-86241871", "level": 5, "detail": "楼主"},
+                "partnerBusiness": {"uscCode": "91431300187402930W", "beginDate": "1993-04-13",
+                                    "validDate": "2999-12-31", "companyType": "集体所有制",
+                                    "registAddress": "娄底市娄星区洪家洲振兴路（涟钢检修厂旁）", "legalPerson": "谢国阳",
+                                    "registAuthority": "娄底市工商行政管理局", "approvalDate": "2016-03-28",
+                                    "registStatus": "存续（在营、开业、在册）", "registCapital": 303,
+                                    "scope": "环保设备设计、制造、安装，铆焊机械零配件加工，拉丝，机电设备安装、维修；工业废料回收开发利用，五金、化工产品（不含专控危险品）、金属材料销售；转运装卸、劳务输出（限涟钢厂内）；废油回收加工。软化丝、废钢切割，防腐工程，建筑材料，政策允许的矿产品、金属材料；炉料生产销售。",
+                                    "legalPersonIdcode": uscCode},
+                "partnerExt": {"standardIndustry": "552", "category": "44"}, "partnerQualifys": [{"qualifyType": 1,
+                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/b5f4b5ed46474606b7c603084fb140cd.jpg",
+                                                                                                  "qualifyName": "营业执照",
+                                                                                                  "qualifyBeginDate": "1993-04-13",
+                                                                                                  "qualifyValidDate": "2999-12-31"},
+                                                                                                 {"qualifyType": 2,
+                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/21d5c46b4c7543e59be30d435fa7c9c5.jpg,https://bj.bcebos.com/v1/hnjing-test/8288ec28360f4499a76879ddd3ae5d94.jpg",
+                                                                                                  "qualifyName": "法人身份证",
+                                                                                                  "qualifyBeginDate": "2018-09-30",
+                                                                                                  "qualifyValidDate": "2018-09-30"}],
+                "employees": {"empName": "测试", "phone": "15814405932", "email": "15814405932@139.com"}}
+            url = 'http://admin.ejw.cn/platform/v1/partnerall?curEmpId=1699'
+            # 发送服务商接口请求
+            qykh_test_01 = requests.post(url, data=json.dumps(paramas), headers=headers)
+            print(qykh_test_01.text)
+            result_act = qykh_test_01.status_code
+            result_exp = 200
+            # 判断当前返回码及字段值
+            # 判断当前返回码及字段值
+            self.assertEqual(result_exp, result_act, msg='审核原因：已存在相同用户企业或其它参数错误')
+            log.info("企业客户管理-合作伙伴管理-供应商新增成功")
 
     # 运营管理-合作伙伴管理-不存在的查询
     def test_a003_search(self):

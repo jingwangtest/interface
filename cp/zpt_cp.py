@@ -10,9 +10,13 @@ from comm.Log import Logger
 localReadConfig = readConfig.ReadConfig()
 token_01 = testlogin_001().test_cplogin('token')
 
-class Cpgl_供应商平台(unittest.TestCase):
+class Cpgl(unittest.TestCase):
     # 验证登陆是否成功
     def test_a001_login(self):
+        global log, log_exp, log_act
+        log_exp = Logger(logger="供应商平台_预期结果").getlog()
+        log_act = Logger(logger="供应商平台_实际结果").getlog()
+        log = Logger(logger="供应商平台").getlog()
         params = {'mobilePhone': '15574841920', 'password': '123456', 'remember': 'true', 'siteName': 'main'}
         url = localReadConfig.get_http_cp('url_cp')
 
@@ -28,10 +32,6 @@ class Cpgl_供应商平台(unittest.TestCase):
         result_exp = 200
         result_act = token_act.status_code
         self.assertEqual(result_exp, result_act, msg="用户登陆失败")
-        global log, log_exp, log_act
-        log_exp = Logger(logger="供应商平台_预期结果").getlog()
-        log_act = Logger(logger="供应商平台_实际结果").getlog()
-        log = Logger(logger="供应商平台").getlog()
         log_exp.info(result_exp)
         log_act.info(result_act)
         log.info("用户登陆成功")
