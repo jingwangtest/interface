@@ -304,7 +304,7 @@ class admin_yygl(unittest.TestCase):
         cur.execute(
             "select record_id from product_auth where `status`=3;")
         cur_data = cur.fetchone()
-        print(cur_data)
+        # print(cur_data)
         if cur_data == None:
             result_exp = None
             self.assertEqual(result_exp, cur_data)
@@ -314,7 +314,7 @@ class admin_yygl(unittest.TestCase):
             paramas = {"status": 5}
             url_01 = 'http://admin.ejw.cn/platform/v1/productauth/'
             url = url_01 + record_id + '/platformverify?curEmpId=1699'
-            print(url)
+            # print(url)
             # 发送服务商接口请求
             qykh_test_01 = requests.put(url, data=json.dumps(paramas), headers=headers)
             # print(qykh_test_01.text)
