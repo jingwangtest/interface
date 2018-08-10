@@ -244,9 +244,11 @@ class admin_yygl(unittest.TestCase):
 
     # 运营管理-合作伙伴管理-存在的查询
     def test_a004_search(self):
+        # global log
+        # log = Logger(logger="管理平台").getlog()
         conn = MySQL().connect_os1('conn')
         cur = conn.cursor()
-        cur.execute("select partner_name from partner where partner_name='竞网测试同步sdf'")
+        cur.execute("select partner_name from partner where partner_name='竞网测试同步sdsdfds'")
         parnername = str(cur.fetchone()[0])
         url_01 = 'http://admin.ejw.cn/os/v1/partners?pageNo=1&pageSize=10&partnerType=0010%2C0011%2C0100%2C0101%2C0111%2C0110&partnerName='
         url = url_01 + parnername
@@ -293,51 +295,33 @@ class admin_yygl(unittest.TestCase):
         self.assertEqual(result_exp, int(totalCount))
         log.info("企业客户管理-不存在的用户查询成功")
 
-    # 运营管理-企业客户管理-合作伙伴管理-企业审核
+    # 产品运营-产品授权审核-待审核
     def test_b003_search(self):
-        # 随机生成社会信用代码
-        uscCode_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 10))
-        uscCode_02 = '43062419'
-        uscCode = uscCode_01 + uscCode_02
-
-        conn = MySQL().connect_portal1('conn')
+        global log
+        log = Logger(logger="管理平台").getlog()
+        conn = MySQL().connect_platform1('conn')
         cur = conn.cursor()
         cur.execute(
-            "select partner_id,partner_name,area,address,phone from partner where `status`=0 order by gmt_create desc")
-        cur_data = cur.fetchone()[0:5]
-        print(cur_data)
-        partner_id = str(cur_data[0])
-        partner_name = cur_data[1]
-        area = cur_data[2]
-        address = cur_data[3]
-        phone = cur_data[4]
-        # print(cur_data, partner_id, partner_name, area, address, phone)
-
-        paramas = {"partnerAudit": {"status": 1},
-                   "partner": {"status": 1, "partnerName": partner_name, "area": area, "address": address,
-                               "phone": phone, "detail": "陈名绑定企业客户", "organizeType": 1, "partnerType": "0001"},
-                   "partnerExt": {"standardIndustry": "612"},
-                   "partnerQualify": {"qualifyType": 1, "qualifyName": "测试专用", "qualifyValidDate": "2019-07-31",
-                                      "qualifyImage": "https://bj.bcebos.com/v1/dev-con/0a64c4444a034356915cf0747317450f.jpg"},
-                   "employees": {"status": 1, "sex": 1, "empName": "陈名", "phone": "18686086818",
-                                 "email": "15814405932@139.com", "partnerId": 43, "userId": 9},
-                   "partnerBusiness": {"organizeName": "陈名绑定企业客户管理员", "registAuthority": "无限网络登记", "organizeType": 1,
-                                       "uscCode": uscCode, "companyType": "1111", "registAddress": "121331",
-                                       "legalPerson": "张三", "scope": "经营经济任务", "issueAuthority": "",
-                                       "approvalDate": "2019-07-31", "registStatus": "无状态", "registCapital": 10000},
-                   "partnerQualifys": [{"qualifyType": 1, "qualifyName": "测试专用", "qualifyValidDate": "2019-07-31",
-                                        "qualifyImage": "https://bj.bcebos.com/v1/dev-con/0a64c4444a034356915cf0747317450f.jpg"}]}
-
-        url_01 = 'http://admin.ejw.cn/platform/v1/partner/'
-        url = url_01 + partner_id + '/audit'
-        # 发送服务商接口请求
-        qykh_test_01 = requests.put(url, data=json.dumps(paramas), headers=headers)
-        # print(qykh_test_01.text)
-        result_act = qykh_test_01.status_code
-        result_exp = 200
-        # 判断当前返回码及字段值
-        self.assertEqual(result_exp, result_act, msg='审核原因：数据库已存在相同用户企业或其它参数错误')
-        log.info("企业客户管理-合作伙伴管理-企业审核成功")
+            "select record_id from product_auth where `status`=3;")
+        cur_data = cur.fetchone()
+        # print(cur_data)
+        if cur_data == None:
+            result_exp = None
+            self.assertEqual(result_exp, cur_data)
+            log.info("企业客户管理-合作伙伴管理-没有需要审核的产品信息")
+        else:
+            record_id = str(cur_data[0])
+            paramas = {"status": 5}
+            url_01 = 'http://admin.ejw.cn/platform/v1/productauth/494'
+            url = url_01 + record_id + '/platformverify?curEmpId=1699'
+            # 发送服务商接口请求
+            qykh_test_01 = requests.put(url, data=json.dumps(paramas), headers=headers)
+            # print(qykh_test_01.text)
+            result_act = qykh_test_01.status_code
+            result_exp = 200
+            # 判断当前返回码及字段值
+            self.assertEqual(result_exp, result_act, msg='审核失败：没有存在的企业或其它参数错误')
+            log.info("企业客户管理-合作伙伴管理-产品授权审核成功")
 
     # # 运营管理-企业客户管理-合作伙伴管理-企业审核通过-停用
     # def test_b004_search(self):
