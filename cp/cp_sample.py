@@ -22,30 +22,27 @@ headers = {
 
 
 class Cpgl_cpsxj(unittest.TestCase):
-    # 验证登陆是否成功
-    def test_a001_login(self):
-        global log, log_exp, log_act
-        log_exp = Logger(logger="供应商平台_预期结果").getlog()
-        log_act = Logger(logger="供应商平台_实际结果").getlog()
-        log = Logger(logger="供应商平台").getlog()
-        params = {'mobilePhone': '15574841920', 'password': '123456', 'remember': 'true', 'siteName': 'main'}
-        url = localReadConfig.get_http_cp('url_cp')
-
+    # 智营销平台-产品管理-产品名称查询
+    def test_b002_cpmc_search(self):
+        # 请求下单功能
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:59.0) Gecko/20100101 Firefox/59.0',
-            'Accept - Encoding': 'gzip, deflate',
-            'Accept - Language': 'zh - CN, zh;q = 0.9',
-            'Referer': 'http://www1.ejw.cn/auth/?backUrl=http%3A%2F%2Fadmin.ejw.cn%2F%23%2F',
-            'X-Requested-With': 'XMLHttpRequest'
+            'token': token
         }
-        token_act = requests.post(url, data=json.dumps(params), headers=headers)
-        result_exp = 200
-        result_act = token_act.status_code
-        self.assertEqual(result_exp, result_act, msg="用户登陆失败")
-        log_exp.info(result_exp)
-        log_act.info(result_act)
-        log.info("用户登陆成功")
+        # 请求查询参数
+        product_name = "%自动化测试%"
+        url = 'http://cp.ejw.cn/ps/v1/cpproducts?pageNum=1&pageSize=20&_sort=modifyDate%2Cdesc&cpPartnerId=502&cpProductName=%E8%87%AA%E5%8A%A8%E5%8C%96'
+        result_all = requests.get(url, headers=headers).text
+        result_json = json.loads(result_all)
+        totalCount_exp = result_json["page"]["totalCount"]
+
+        # 连接数据库创建一个游标对象
+        conn = MySQL().connect_ps1("conn")
+        cur = conn.cursor()
+        cur.execute('select count(*) from cp_product t where t.cp_product_name like "' + product_name + '"')
+        totalCount_act = cur.fetchone()[0]
+        self.assertEqual(totalCount_exp, totalCount_act, "预期结果与实际结果不一致")
+        log.info("已存在的产品名称验证成功")
 
 
 if __name__ == '__main__':
