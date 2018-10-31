@@ -161,7 +161,7 @@ class Cpgl(unittest.TestCase):
         # 连接数据库创建一个游标对象
         conn = MySQL().connect_ps1("conn")
         cur = conn.cursor()
-        cur.execute('select count(*) from product t where t.product_name like "' + product_name + '"')
+        cur.execute('select count(*) from cp_product t where t.cp_product_name like "' + product_name + '"')
         totalCount_act = cur.fetchone()[0]
         self.assertEqual(totalCount_exp, totalCount_act, "预期结果与实际结果不一致")
         log.info("已存在的产品名称验证成功")
