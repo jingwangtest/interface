@@ -28,51 +28,51 @@ class ReadConfig:
         return value
 
     def get_db_bi(self, database_bi):
-        value = self.cf.get("DATABASE", database_bi)
+        value = self.cf.get("DATABASE150", database_bi)
         return value
 
     def get_db_bi1(self, database_bi1):
-        value = self.cf.get("DATABASE150", database_bi1)
+        value = self.cf.get("DATABASE", database_bi1)
         return value
 
     def get_db_ps(self, database_ps):
-        value = self.cf.get("DATABASE", database_ps)
+        value = self.cf.get("DATABASE150", database_ps)
         return value
 
     def get_db_ps1(self, database_ps1):
-        value = self.cf.get("DATABASE150", database_ps1)
+        value = self.cf.get("DATABASE", database_ps1)
         return value
 
     def get_db_platform(self, database_platform):
-        value = self.cf.get("DATABASE", database_platform)
+        value = self.cf.get("DATABASE150", database_platform)
         return value
 
     def get_db_platform1(self, database_platform1):
-        value = self.cf.get("DATABASE150", database_platform1)
+        value = self.cf.get("DATABASE", database_platform1)
         return value
 
     def get_db_mall(self, database_mall):
-        value = self.cf.get("DATABASE", database_mall)
+        value = self.cf.get("DATABASE150", database_mall)
         return value
 
     def get_db_mall1(self, database_mall1):
-        value = self.cf.get("DATABASE150", database_mall1)
+        value = self.cf.get("DATABASE", database_mall1)
         return value
 
     def get_db_os(self, database_os):
-        value = self.cf.get("DATABASE", database_os)
+        value = self.cf.get("DATABASE150", database_os)
         return value
 
     def get_db_os1(self, database_os1):
-        value = self.cf.get("DATABASE150", database_os1)
+        value = self.cf.get("DATABASE", database_os1)
         return value
 
     def get_db_portal(self, database_portal):
-        value = self.cf.get("DATABASE", database_portal)
+        value = self.cf.get("DATABASE150", database_portal)
         return value
 
     def get_db_portal1(self, database_portal1):
-        value = self.cf.get("DATABASE150", database_portal1)
+        value = self.cf.get("DATABASE", database_portal1)
         return value
 
 

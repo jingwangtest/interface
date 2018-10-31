@@ -10,7 +10,7 @@ localReadConfig = readConfig.ReadConfig()
 class testlogin_001():
     # cp公共登陆组件
     def test_cplogin(self, token):
-        params = {'mobilePhone': '13025406605', 'password': '123456', 'remember': 'true', 'siteName': 'main'}
+        params = {'mobilePhone': '13025406605', 'password': '123456', 'remember': True, 'siteName': 'main'}
         url = localReadConfig.get_http_cp('url_cp')
 
         headers = {
@@ -32,7 +32,7 @@ class testlogin_001():
 
     # sp公共登陆组件
     def test_splogin(self, token):
-        params = {'mobilePhone': '13025406605', 'password': '123456', 'remember': 'true', 'siteName': 'main'}
+        params = {'mobilePhone': '13025406605', 'password': '123456', 'remember': True, 'siteName': 'main'}
         url = localReadConfig.get_http_sp('url_sp')
 
         headers = {
@@ -54,7 +54,7 @@ class testlogin_001():
 
     # cu公共登陆组件
     def test_culogin(self, token):
-        params = {'mobilePhone': '15074980908', 'password': '123456', 'remember': 'true', 'siteName': 'main'}
+        params = {'mobilePhone': '15074980908', 'password': '123456', 'remember': True, 'siteName': 'main'}
         url = localReadConfig.get_http_cu('url_cu')
 
         headers = {
@@ -76,7 +76,7 @@ class testlogin_001():
 
     # admin公共登陆组件
     def test_adminlogin(self, token):
-        params = {'mobilePhone': '18600000000', 'password': '123456', 'remember': 'true', 'siteName': 'main'}
+        params = {'mobilePhone': '18600000000', 'password': '123456', 'remember': True, 'siteName': 'main'}
         url = "http://admin.ejw.cn/api/login"
 
         headers = {
@@ -98,7 +98,7 @@ class testlogin_001():
 
     # www1公共登陆组件
     def test_www1login(self, token):
-        params = {"mobilePhone": "18511338082", "password": "123456", "remember": "true", "siteName": "main"}
+        params = {"mobilePhone": "18511338082", "password": "123456", "remember": True, "siteName": "main"}
         # url = localReadConfig.get_http_cp('url_cp')
         url = "http://www1.ejw.cn/api/login"
         headers = {

@@ -16,7 +16,7 @@ class MySQL():
         mall = localReadConfig.get_db_mall('database_mall')
         conn = pymysql.connect(
             host=host,
-            port=port,
+            port=port_3308,
             user=username,
             passwd=password,
             db=mall,
@@ -28,7 +28,7 @@ class MySQL():
         mall1 = localReadConfig.get_db_mall1('database_mall1')
         conn = pymysql.connect(
             host=host,
-            port=port_3308,
+            port=port,
             user=username,
             passwd=password,
             db=mall1,
@@ -37,12 +37,12 @@ class MySQL():
         return conn
 
 
-    # 连接ps数据库----分支环境
+    # 连接ps数据库----主干环境
     def connect_ps(self, conn):
         ps = localReadConfig.get_db_ps('database_ps')
         conn = pymysql.connect(
             host=host,
-            port=port,
+            port=port_3308,
             user=username,
             passwd=password,
             db=ps,
@@ -50,12 +50,12 @@ class MySQL():
         )
         return conn
 
-    # 连接ps1数据库----主干环境
+    # 连接ps1数据库----分支环境
     def connect_ps1(self, conn):
         ps1 = localReadConfig.get_db_ps1('database_ps1')
         conn = pymysql.connect(
             host=host,
-            port=port_3308,
+            port=port,
             user=username,
             passwd=password,
             db=ps1,
@@ -63,12 +63,12 @@ class MySQL():
         )
         return conn
 
-    # 连接bi数据库----分支环境
+    # 连接bi数据库----主干环境
     def connect_bi(self, conn):
         bi = localReadConfig.get_db_bi('database_bi')
         conn = pymysql.connect(
             host=host,
-            port=port,
+            port=port_3308,
             user=username,
             passwd=password,
             db=bi,
@@ -76,12 +76,12 @@ class MySQL():
         )
         return conn
 
-    # 连接bi1数据库----主干环境
+    # 连接bi1数据库----分支环境
     def connect_bi1(self, conn):
         bi1 = localReadConfig.get_db_bi1('database_bi1')
         conn = pymysql.connect(
             host=host,
-            port=port_3308,
+            port=port,
             user=username,
             passwd=password,
             db=bi1,
@@ -89,12 +89,12 @@ class MySQL():
         )
         return conn
 
-    # 连接platform数据库----分支环境
+    # 连接platform数据库----主干环境
     def connect_platform(self, conn):
         platform = localReadConfig.get_db_platform('database_platform')
         conn = pymysql.connect(
             host=host,
-            port=port,
+            port=port_3308,
             user=username,
             passwd=password,
             db=platform,
@@ -102,12 +102,12 @@ class MySQL():
         )
         return conn
 
-    # 连接platform数据库----主干环境
+    # 连接platform数据库----分支环境
     def connect_platform1(self, conn):
         platform1 = localReadConfig.get_db_platform1('database_platform1')
         conn = pymysql.connect(
             host=host,
-            port=port_3308,
+            port=port,
             user=username,
             passwd=password,
             db=platform1,
@@ -116,12 +116,12 @@ class MySQL():
         return conn
 
 
-    # 连接protal1数据库----分支环境
+    # 连接protal数据库----主干环境
     def connect_portal(self, conn):
         portal = localReadConfig.get_db_portal('database_portal')
         conn = pymysql.connect(
             host=host,
-            port=port,
+            port=port_3308,
             user=username,
             passwd=password,
             db=portal,
@@ -129,12 +129,12 @@ class MySQL():
         )
         return conn
 
-    # 连接protal1数据库----主干环境
+    # 连接protal1数据库----分支环境
     def connect_portal1(self, conn):
         portal1 = localReadConfig.get_db_portal1('database_portal1')
         conn = pymysql.connect(
             host=host,
-            port=port_3308,
+            port=port,
             user=username,
             passwd=password,
             db=portal1,
@@ -142,9 +142,9 @@ class MySQL():
         )
         return conn
 
-    # 连接os数据库----分去环境
-    def connect_os(self, conn):
-        os = localReadConfig.get_db_os('database_os')
+    # 连接os数据库----分支环境
+    def connect_os1(self, conn):
+        os = localReadConfig.get_db_os1('database_os1')
         conn = pymysql.connect(
             host=host,
             port=port,
@@ -155,15 +155,15 @@ class MySQL():
         )
         return conn
 
-    # 连接os1数据库----主干环境
-    def connect_os1(self, conn):
-        os1 = localReadConfig.get_db_os1('database_os1')
+    # 连接os数据库----主干环境
+    def connect_os(self, conn):
+        os1 = localReadConfig.get_db_os('database_os')
         conn = pymysql.connect(
             host=host,
             port=port_3308,
             user=username,
             passwd=password,
-            db=os1,
+            db=os,
             charset=charset
         )
         return conn

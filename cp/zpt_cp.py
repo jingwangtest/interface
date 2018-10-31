@@ -6,9 +6,11 @@ import random
 from comm.public_data import MySQL
 from comm.login import testlogin_001
 from comm.Log import Logger
+
 # 获取配置文件地址url
 localReadConfig = readConfig.ReadConfig()
-token_01 = testlogin_001().test_cplogin('token')
+token = testlogin_001().test_cplogin('token')
+
 
 class Cpgl(unittest.TestCase):
     # 验证登陆是否成功
@@ -40,9 +42,9 @@ class Cpgl(unittest.TestCase):
     def test_a002_bmyg_serach(self):
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',
-            'token': token_01
+            'token': token
         }
-        empname = "测试"
+        empname = "蒋涛"
         url_01 = "http://cp.ejw.cn/cp/v1/partner/402/employees?depId=236&pageNo=1&pageSize=10&sort=%7B%22gmtCreate%22%3A%22desc%22%7D&curEmpId=1723&jobNoOrEmpName="
         url = url_01 + empname
         result = requests.get(url, headers=headers)
@@ -56,10 +58,10 @@ class Cpgl(unittest.TestCase):
     def test_a003_bmyg_serach(self):
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',
-            'token': token_01
+            'token': token
         }
-        empname = "测试sadfasfasfsfasfd"
-        url_01 = "http://cp.ejw.cn/cp/v1/partner/402/employees?pageNo=1&pageSize=10&sort=%7B%22gmtCreate%22%3A%22desc%22%7D&curEmpId=1723&jobNoOrEmpName="
+        empname = "xxxxxxxxxxxxxxxxxxx"
+        url_01 = "http://cp.ejw.cn/cp/v1/partner/502/employees?pageNo=1&pageSize=10&sort=%7B%22gmtCreate%22%3A%22desc%22%7D&curEmpId=1723&jobNoOrEmpName="
         url = url_01 + empname
         result = requests.get(url, headers=headers)
         result_act = result.text
@@ -72,11 +74,11 @@ class Cpgl(unittest.TestCase):
         name_01 = '自动化测试角色'
         Name = name_01 + name_02
         # print(Name)
-        url = "http://cp.ejw.cn/os/v1/partner/402/role"
+        url = "http://cp.ejw.cn/os/v1/partner/502/role"
         headers = {
             'Accept': 'application/json, text/plain, */*',
             'Content-Type': 'application/json;charset=UTF-8',
-            'token': token_01
+            'token': token
         }
         params = {"roleName": Name, "appName": "cp"}
         # print(params)
@@ -94,14 +96,14 @@ class Cpgl(unittest.TestCase):
         mobile = mobile_01 + mobile_02
         mail_01 = '@qq.com'
         mail = mobile + mail_01
-        params = [{"roles": [1954], "departments": [{"depId": 428, "position": 1}], "empName": empName, "jobNo": jobNo,
+        params = [{"roles": [1626], "departments": [{"depId": 523, "position": 1}], "empName": empName, "jobNo": jobNo,
                    "email": mail, "phone": mobile, "status": 1,
                    "entryDate": "2018-05-02T16:00:00.000Z"}]
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',
-            'token': token_01
+            'token': token
         }
-        url = "http://cp.ejw.cn/cp/v1/partner/402/employees"
+        url = "http://cp.ejw.cn/cp/v1/partner/502/employees"
         result_exp = requests.post(url, data=json.dumps(params), headers=headers).status_code
         result_act = 200
         self.assertEqual(result_exp, result_act)
@@ -111,59 +113,47 @@ class Cpgl(unittest.TestCase):
     # 智营销平台-产品管理-发布产品
     def test_b001_fbcp(self):
         name_02 = ''.join(random.sample(['a', 'b', 'c', 'd', 'e', '1', '5', '6', 'x'], 6))
-        name_01 = '自动化测试'
+        name_01 = '供_自动化测试勿删'
         productName = name_01 + name_02
         # 请求下单功能
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',
-            'token': token_01
+            'token': token
         }
         # print(headers)
         # 请求参数
-        url = 'http://cp.ejw.cn/cp/v1/partner/402/product?curEmpId=1723'
-        parms = {"productSetupAttributes": [{"attrId": 102, "customAttrValue": "", "fillValue": "11"},
-                                            {"attrId": 106, "customAttrValue": "", "fillValue": "模压"},
-                                            {"attrId": 107, "customAttrValue": "", "fillValue": "内容,信息,数据"},
-                                            {"attrId": 103, "customAttrValue": "", "fillValue": "111"}],
-                 "productCustomAttributes": [], "productSpecs": [{"sellPrice": "1.00", "stock": 1,
-                                                                  "productSpecAttributes": [
-                                                                      {"attrId": 103, "attrValue": "111", "code": 1,
-                                                                       "isCustomAttr": "0"},
-                                                                      {"attrId": 107, "attrValue": "内容", "code": 1,
-                                                                       "isCustomAttr": "0"}]},
-                                                                 {"sellPrice": "1.00", "stock": 1,
-                                                                  "productSpecAttributes": [
-                                                                      {"attrId": 103, "attrValue": "111", "code": 1,
-                                                                       "isCustomAttr": "0"},
-                                                                      {"attrId": 107, "attrValue": "信息", "code": 1,
-                                                                       "isCustomAttr": "0"}]},
-                                                                 {"sellPrice": "1.00", "stock": 1,
-                                                                  "productSpecAttributes": [
-                                                                      {"attrId": 103, "attrValue": "111", "code": 1,
-                                                                       "isCustomAttr": "0"},
-                                                                      {"attrId": 107, "attrValue": "数据", "code": 1,
-                                                                       "isCustomAttr": "0"}]}], "typeId": 1,
-                 "partnerId": 402, "partnerType": "0100", "productName": productName, "productType": "single",
-                 "productInfo": "<p>这是一个自动化测试过程</p>",
-                 "images": "https://bj.bcebos.com/v1/hnjing-test/9f35b1bcc51a46a68e4d9a1ddd791b3f.jpg,https://bj.bcebos.com/v1/hnjing-test/7a064e7669a746979e457f341bece02f.jpg",
-                 "qualification": "23", "createUserid": 164, "specMinPrice": 1, "specMaxPrice": 1, "tempStatus": "1",
-                 "flowId": 96}
+        url = 'http://cp.ejw.cn/cp/v1/partner/502/product?curEmpId=2121'
+        parms = {"typeId": 136, "productInfo": "<p>塑料袋</p>",
+                 "images": "https://bj.bcebos.com/v1/hnjing-test/cb4ef37d38ff46c8bc74fdfc2bed6899.jpg",
+                 "qualification": "135", "tempStatus": "1", "flowId": 135, "specMinPrice": 0.1, "specMaxPrice": 0.1,
+                 "cpPartnerName": "竞网自动化勿删", "buyType": "0", "cpCommonAttrInfos": [
+                {"cpCommonAttrId": None, "attrFormType": "text", "attrLayerType": "2", "attrIsValid": "1",
+                 "required": "1", "attrOrder": None, "attrType": "0", "attrValue": "", "fillValue": "颜色标准尺寸",
+                 "cpCommonAttrName": "域名描述", "isTemp": "1"},
+                {"cpCommonAttrId": None, "cpCommonAttrName": "空间", "attrValue": "500M,1G,10G",
+                 "attrFormType": "checkbox", "attrLayerType": "1", "attrType": "1", "fillValue": "500M", "attrOrder": 2,
+                 "required": "1", "customAttrValue": "", "isTemp": "1"},
+                {"cpCommonAttrId": None, "cpCommonAttrName": "域名", "attrValue": "中文域名,英文域名", "attrFormType": "checkbox",
+                 "attrLayerType": "1", "attrType": "1", "fillValue": "中文域名", "attrOrder": 1, "required": "1",
+                 "customAttrValue": "", "isTemp": "1"}], "cpProductName": productName, "productSpecs": [
+                {"specSort": 0, "sellPrice": "0.10", "cpProductSpecAttrs": [{"attrValue": "500M", "attrName": "空间"},
+                                                                            {"attrValue": "中文域名", "attrName": "域名"}]}]}
         values = json.dumps(parms)
         # 返回状态码信息
         respon_act = requests.post(url, data=values, headers=headers).text
         self.assertIn(productName, respon_act, msg="参数异常")
-        log.info("产品"+productName+"发布成功")
+        log.info("产品" + productName + "发布成功")
 
-    # 智营销平台-产品管理-产品上下架管理-产品名称查询
+    # 智营销平台-产品管理-产品名称查询
     def test_b002_cpmc_search(self):
         # 请求下单功能
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',
-            'token': token_01
+            'token': token
         }
         # 请求查询参数
         product_name = "%自动化测试%"
-        url = 'http://cp.ejw.cn/cp/v1/partner/402/products?pageNo=1&pageSize=10&sort=%7B%22createTime%22%3A%22desc%22%7D&productName=%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95'
+        url = 'http://cp.ejw.cn/ps/v1/cpproducts?pageNum=1&pageSize=20&_sort=modifyDate%2Cdesc&cpPartnerId=502&cpProductName=%E8%87%AA%E5%8A%A8%E5%8C%96'
         result_all = requests.get(url, headers=headers).text
         result_json = json.loads(result_all)
         totalCount_exp = result_json["page"]["totalCount"]
@@ -176,16 +166,16 @@ class Cpgl(unittest.TestCase):
         self.assertEqual(totalCount_exp, totalCount_act, "预期结果与实际结果不一致")
         log.info("已存在的产品名称验证成功")
 
-    # 智营销平台-产品管理-产品上下架管理-产品选择日期查询
+    # 智营销平台-产品管理-产品选择日期查询
     def test_b003_cpmc_search(self):
         # 请求下单功能
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',
-            'token': token_01
+            'token': token
         }
         # print(headers)
         # 请求查询参数
-        url_get = 'http://cp.ejw.cn/cp/v1/partner/402/products?pageNo=1&pageSize=10&sort=%7B%22createTime%22%3A%22desc%22%7D&createTimeStart=2018-05-01T16%3A00%3A00.000Z&createTimeEnd=2019-05-02T15%3A59%3A59.000Z'
+        url_get = 'http://cp.ejw.cn/ps/v1/cpproducts?pageNum=1&pageSize=20&_sort=modifyDate%2Cdesc&cpPartnerId=502&modifyTimeStart=2018-10-14T16%3A00%3A00.000Z&modifyTimeEnd=2018-11-30T15%3A59%3A59.000Z'
         result_all = requests.get(url_get, headers=headers).text
         # result_json = json.loads(result_all.text)
         # totalCount_exp = result_json["data"][0]["productName"]
@@ -197,9 +187,9 @@ class Cpgl(unittest.TestCase):
         cur = conn.cursor()
         # order = "order by create_time desc"
         date_01 = '2018-05-02 00:00:00'
-        sql_03 = 'and t.create_time < "2019-05-02 23:59:59"'
-        sql_01 = " order by create_time desc"
-        sql_02 = 'select t.product_name from product t where t.partner_id=402 and t.create_time > "' + date_01 + '" '
+        sql_03 = 'and t.create_date < "2019-05-02 23:59:59"'
+        sql_01 = " order by create_date desc"
+        sql_02 = 'select t.cp_product_name from cp_product t where t.cp_partner_id=502 and t.create_date > "' + date_01 + '" '
         # 拼接sql语句
         sql = sql_02 + sql_03 + sql_01
         # print(sql)
@@ -209,8 +199,6 @@ class Cpgl(unittest.TestCase):
         totalCount_act = cur.fetchone()[0]
         self.assertIn(totalCount_act, result_all, msg="数据查询不正确")
         log.info("产品查询日期正常")
-
-
 
 if __name__ == '__main__':
     unittest.main()

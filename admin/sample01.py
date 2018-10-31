@@ -20,7 +20,7 @@ class admin_yygl(unittest.TestCase):
     def test_a002_yygl(self):
         global log
         log = Logger(logger="管理平台").getlog()
-        name_01 = "林丽娟自创供应商dg"
+        name_01 = "湖南天劲制药有限责任公司"
         conn_partner = MySQL().connect_os1('conn')
         cur1 = conn_partner.cursor()
         cur1.execute('select partner_id from partner where partner_name ="' + name_01 + '"')
@@ -77,7 +77,7 @@ class admin_yygl(unittest.TestCase):
             # 删除除长沙艾客美食文化传播有限公司相关联的数据用户信息
             cur1.execute('delete from employee_link_role where emp_id = "' + emp_id + '"')
             cur1.execute('delete from employee where partner_id = "' + name_id + '"')
-            cur1.execute('delete from partner_business where partner_id= "' + name_id + '"')
+            cur1.execute('delete from partner_business where partner_id = "' + name_id + '"')
             cur1.execute('delete from partner_ext where partner_id= "' + name_id + '"')
             cur1.execute('delete from partner_qualify where partner_id= "' + name_id + '"')
             cur1.execute('delete from partner where partner_name="' + name_01 + '"')
@@ -89,7 +89,7 @@ class admin_yygl(unittest.TestCase):
             uscCode_02 = '43062419'
             uscCode = uscCode_01 + uscCode_02
             paramas = {
-                "partner": {"partnerType": "0101", "partnerName": name_01, "area": "湖南/长沙", "address": "麓谷",
+                "partner": {"partnerType": "0111", "partnerName": name_01, "area": "湖南/长沙", "address": "麓谷",
                             "phone": "0731-86241871", "level": 5, "detail": "楼主"},
                 "partnerBusiness": {"uscCode": "91431300187402930W", "beginDate": "1993-04-13",
                                     "validDate": "2999-12-31", "companyType": "集体所有制",

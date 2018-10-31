@@ -1,0 +1,46 @@
+2018-10-31 13:50:27,551 - 供应商平台_预期结果 - INFO - 蒋涛
+2018-10-31 13:50:27,551 - 供应商平台_实际结果 - INFO - {
+	"data":[
+		{
+			"departments":[
+				{
+					"depId":236,
+					"departName":"部门1",
+					"position":1
+				}
+			],
+			"email":"15814405932@139.com",
+			"empId":1723,
+			"empName":"蒋涛",
+			"entryDate":"2018-06-01T00:00:00+08:00",
+			"gmtCreate":"2018-06-11T15:45:59+08:00",
+			"gmtModified":"2018-06-11T15:46:34+08:00",
+			"jobNo":"16345",
+			"partnerId":402,
+			"phone":"13025406605",
+			"roles":[{
+				"roleId":1116,
+				"roleName":"管理员"
+			}],
+			"status":1,
+			"userId":164
+		}
+	],
+	"page":{
+		"hasPrePage":false,
+		"lastPage":true,
+		"offset":0,
+		"startRow":1,
+		"hasNextPage":false,
+		"prePage":1,
+		"nextPage":1,
+		"endRow":1,
+		"totalCount":1,
+		"firstPage":true,
+		"limit":10,
+		"totalPages":1,
+		"page":1
+	}
+}
+2018-10-31 13:50:27,552 - 供应商平台 - INFO - 蒋涛查询成功
+2018-10-31 13:50:27,647 - 供应商平台 - INFO - xxxxxxxxxxxxxxxxxxx查询成功

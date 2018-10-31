@@ -89,7 +89,7 @@ if __name__ == "__main__":
     # if上面是写好的四个函数，一般情况无需修改，只需改if以下的路径参数就行了
     # 测试用例的路径、匹配规则
     # case_path = "F:\\python_script\\interface\\test_case"
-    case_path = os.path.abspath(os.path.join(os.getcwd(), "..", "cp"))
+    case_path = os.path.abspath(os.path.join(os.getcwd(), "..", "admin"))
     # 匹配规则
     rule = "zpt*.py"
     # 1.加载用例
