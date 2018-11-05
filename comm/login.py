@@ -113,3 +113,22 @@ class testlogin_001():
         s = json.loads(token_act.text)
         values = s["data"]["access_token"]
         return values
+
+    # emp公共登陆组件
+    def test_emplogin(self, token):
+        params = {"mobilePhone": "15116398872", "password": "123456", "remember": True, "siteName": "main"}
+        # url = localReadConfig.get_http_cp('url_cp')
+        url = "http://auth.ejw.cn/api/login"
+        headers = {
+            'Content-Type': 'application/json;charset=UTF-8',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:59.0) Gecko/20100101 Firefox/59.0',
+            'Accept - Encoding': 'gzip, deflate',
+            'Accept - Language': 'zh - CN, zh;q = 0.9',
+            'Referer': 'http://auth.ejw.cn/?backUrl=http%3A%2F%2Femp.hnjing.com%2F%23%2F',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+        token_act = requests.post(url, data=json.dumps(params), headers=headers)
+        s = json.loads(token_act.text)
+        print(s)
+        values = s["data"]["access_token"]
+        return values

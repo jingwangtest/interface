@@ -79,9 +79,9 @@ if __name__ == "__main__":
     # if上面是写好的四个函数，一般情况无需修改，只需改if以下的路径参数就行了
     # 测试用例的路径、匹配规则
     # case_path = "F:\\python_script\\interface\\test_case"
-    case_path = os.path.abspath(os.path.join(os.getcwd(), "..", "cp"))
+    case_path = os.path.abspath(os.path.join(os.getcwd(), "..", "sp"))
     # 匹配规则
-    rule = "zpt*.py"
+    rule = "delete*.py"
     # 1.加载用例
     all_case = add_case(case_path, rule)
     # 生成测试报告的路径
