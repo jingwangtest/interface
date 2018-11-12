@@ -75,9 +75,13 @@ class ReadConfig:
         value = self.cf.get("DATABASE", database_portal1)
         return value
 
+    def get_db_empos(self, database_empos):
+        value = self.cf.get("DATABASE150", database_empos)
+        return value
 
-
-
+    def get_db_empos1(self, database_empos1):
+        value = self.cf.get("DATABASE", database_empos1)
+        return value
 
     def get_db_host(self, host):
         value = self.cf.get("DATABASE", host)

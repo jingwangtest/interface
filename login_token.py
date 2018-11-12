@@ -11,7 +11,7 @@ import random
 from selenium.webdriver.common.keys import Keys
 
 # 全量变量
-url = "http://www1.ejw.cn/api/login"
+url = "http://www.ejw.cn/api/login"
 # logger = Logger(logger='智平台测试').getlog()
 
 # 登录

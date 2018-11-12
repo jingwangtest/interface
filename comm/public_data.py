@@ -168,4 +168,28 @@ class MySQL():
         )
         return conn
 
+    # 连接empos数据库----主干环境
+    def connect_empos(self, conn):
+        empos = localReadConfig.get_db_empos('database_empos')
+        conn = pymysql.connect(
+            host=host,
+            port=port_3308,
+            user=username,
+            passwd=password,
+            db=empos,
+            charset=charset
+        )
+        return conn
 
+    # 连接empos数据库----分支环境
+    def connect_empos1(self, conn):
+        empos1 = localReadConfig.get_db_empos1('database_empos1')
+        conn = pymysql.connect(
+            host=host,
+            port=port_3308,
+            user=username,
+            passwd=password,
+            db=empos1,
+            charset=charset
+        )
+        return conn

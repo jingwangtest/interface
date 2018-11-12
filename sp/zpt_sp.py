@@ -124,7 +124,8 @@ class sp_dpgl_01(unittest.TestCase):
     #     cur = conn.cursor()
     #     sql_data = '190'
     #     # 查询出当前要删除案例的id信息
-    #     cur.execute('select policy_Name from marketing_policy t where t.sp_id = "' + sql_data + '"')
+
+    #     cur.execute('select policy_Name from marketing_policy t where t.sp_id  // =  "' + sql_data + '"')
     #     result_exp = str(cur.fetchall()[0][0])
     #     url_01 = 'http://sp.ejw.cn/mall/v1/marketingpolicys?spId=190&policyState=&pageNo=1&pageSize=10&policyName='
     #     url = url_01 + result_exp
@@ -226,27 +227,27 @@ class sp_dpgl_01(unittest.TestCase):
         conn1 = MySQL().connect_platform1('conn')
         cur1 = conn1.cursor()
         cur1.execute(
-            "select auth_id, record_id from product_auth t where t.sp_id='190' and t.`status`=0")
+            "select auth_id, record_id from product_auth t where t.sp_id='502' and t.`status`=0")
         try:
             result_data = cur1.fetchone()[0:2]
             auth_id = result_data[0]
             record_id = result_data[1]
             print(auth_id, record_id)
             url_01 = "http://sp.ejw.cn/platform/v1/productauth/"
-            url = url_01 + str(record_id) + "?curEmpId=1721"
+            url = url_01 + str(record_id) + "?curEmpId=2121"
             print(url)
             params = {"contractId": auth_id, "contractName": "script.rar",
                       "contractBeginDate": "2018-07-13T00:00:00+08:00",
                       "contractValidDate": "2018-07-31T23:59:59+08:00",
                       "contractSpFile": "https://bj.bcebos.com/v1/hnjing-test/890d51e8ec26441da124f4f009cff36f.rar?authorization=bce-auth-v1%2Fed6cb82c3c054636aec25bdbc65d7c10%2F2018-07-13T01%3A51%3A01Z%2F-1%2F%2Ffcdc2fb8500561d8a195514e0d324075dd7c820a1fe7706defcd281460680773"}
+
             result_act = requests.put(url, data=json.dumps(params), headers=headers)
-            result_exp = 1
             log_act.info(result_act)
+            result_exp = 1
             self.assertEqual(result_exp, int(result_act.text), msg="数据异常，产品授权不通过")
-            log.info("产品授权审核通过")
-            log.info("没有需要提交的合同")
+            log.info("提交合同成功-待供应商审核")
         except TypeError:
-            log.info("查询的数据合同为空")
+            log.info("没有需要授权的产品信息")
 
     # 产品管理-供应商授权管理-查询（不存在的）
     def test_c008_product_verify(self):

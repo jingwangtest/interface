@@ -26,21 +26,21 @@ log = Logger(logger="服务商平台").getlog()
 
 
 class admin_yygl(unittest.TestCase):
-    # 产品管理-产品上下架管理-已存在的产品名称查询
-    def test_c005_product_serach(self):
-        conn = MySQL().connect_ps1('conn')
+    # 店铺管理-营销锦囊-已存在的用户名查询
+    def test_b003_jn_search(self):
+        conn = MySQL().connect_mall1('conn')
         cur = conn.cursor()
-        cur.execute("select sp_product_name from sp_product t where t.sp_partner_id=502 order by create_date desc")
-        productName = str(cur.fetchone()[0])
-        log_exp.info(productName)
-        url_01 = "http://sp.ejw.cn/ps/v1/spproducts?buyType=&_sort=modifyDate%2Cdesc&pageSize=20&pageNum=1&spPartnerId=502&spProductName="
-        url = url_01 + productName
-        product_search = requests.get(url, headers=headers)
-        # print(product_search.text)
-        result_act = product_search.text
+        sql_data = '502'
+        # 查询出当前要删除案例的id信息
+        cur.execute('select policy_Name from marketing_policy t where t.sp_id = "' + sql_data + '"')
+        result_exp = str(cur.fetchall()[0][0])
+        url_01 = 'http://sp.ejw.cn/mall/v1/marketingpolicys?spId=502&policyState=&pageNo=1&pageSize=10&policyName='
+        url = url_01 + result_exp
+        result_act = requests.get(url, headers=headers).text
+        log_exp.info(result_exp)
         log_act.info(result_act)
-        self.assertIn(productName, result_act, msg="查询的产品名字不存在")
-        log.info("已有产品名称查询成功")
+        self.assertIn(result_exp, result_act, msg="案例名称查询失败")
+        log.info("案例名称查询成功")
 
     # 产品管理-产品上下架管理-不存在的产品名称查询
     def test_c006_product_serach(self):
