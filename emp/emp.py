@@ -18,7 +18,7 @@ headers = {
     'Refere': 'http://emp.hnjing.com/',
     'Accept-Encoding': 'gzip, deflate',
     'Accept-Language': 'zh-CN,zh;q=0.9',
-    'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InNpZ24iOiIwMWVkNGIxZS1jNjMyLTQzNTktYmI1Yi0wYzFlOGU3ZTQ1MmQiLCJ1c2VySWQiOjN9LCJleHBpcmVzIjoxNTQyMzQ1NjI1fQ._Ax690lMsJt8AZLQk_NZJge3QQzw_AE2F40qO1mF0N8'
+    'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InNpZ24iOiI5MmFiNWI2Mi04ZWEyLTQxMDQtOGIyMC1mMTVkNDZmY2JiZTYiLCJ1c2VySWQiOjN9LCJleHBpcmVzIjoxNTQyMzU4MzEzfQ.kaVjfuG7Hx2AEyDn3yrPjM5oMwI7CebRDqjMOJY4ofs'
 
 }
 
@@ -51,8 +51,10 @@ class emp_01(unittest.TestCase):
        #新增部门
     def test_department_001(self):
         url = "http://emp.hnjing.com/emp_os/v1/department"
-        deptname = "测试部门林01"
-        params = {"departmentName":deptname,"departmentType":0,"creator":"68","absPath":"/93/","parentId":93}
+        deptName01 = ''.join(random.sample(['1', '4', '3', '2', '5', '6'], 3))
+        deptNmame02 = '新增部门张'
+        deptName = deptNmame02 + deptName01
+        params = {"departmentName":deptName,"departmentType":0,"creator":"68","absPath":"/93/","parentId":93}
         dept_add = requests.post(url, data=json.dumps(params), headers=headers)
         result_add = dept_add.text
         self.assertIn(deptname, result_add)
@@ -64,14 +66,18 @@ class emp_01(unittest.TestCase):
         #连接数据库
         conn = MySQL().connect_empos('conn')
         cur = conn.cursor()
-        dept_name = '照相馆01'
-        cur.execute('select department_id from department where department_name = "'+ dept_name +'"')
-        dept_id = str(cur.fetchone()[0])
+        cur.execute('select department_id,department_name from department ')
+        dept = cur.fetchone()[0:2]
+        dept_id = str(dept[0])
+        dept_name = dept[1]
+        print(dept_id, dept_name)
 
         url_bj = "http://emp.hnjing.com/emp_os/v1/department/"
         url = url_bj + dept_id
         #编辑后名称
-        deptName = "照相馆"
+        deptName01 = ''.join(random.sample(['1', '4', '3', '2', '5', '6'], 3))
+        deptNmame02 = '照相馆'
+        deptName = deptNmame02 +deptName01
         params = {"modifier":68,"departmentName":deptName}
         dept_bj = requests.put(url, data=json.dumps(params), headers=headers)
         result_bj = json.loads(dept_bj.text)
@@ -86,7 +92,9 @@ class emp_01(unittest.TestCase):
       #新增岗位
     def test_station_001(self):
         url = "http://emp.hnjing.com/emp_os/v1/station"
-        stationName = "测试岗位林01"
+        stationName01 = ''.join(random.sample(['1', '4', '3', '2', '5', '6'], 3))
+        stationName02 = '新增岗位林'
+        stationName = stationName02 +stationName01
         params = {"stationName": stationName, "stationType": "0", "departmentId": 95, "creator": "68"}
         station_add = requests.post(url, data=json.dumps(params), headers=headers)
         result_add = json.loads(station_add.text)
@@ -101,17 +109,22 @@ class emp_01(unittest.TestCase):
         #连接数据库
         conn = MySQL().connect_empos('conn')
         cur = conn.cursor()
-        station_name = '测试岗位林01'
-        cur.execute('select station_id from station where station_name = "'+ station_name +'"')
-        station_id = str(cur.fetchone()[0])
+        cur.execute('select station_id,station_name from station ')
+        station = cur.fetchone()[0:2]
+        station_id = str(station[0])
+        station_name = station[1]
+        print(station_id, station_name)
 
         url_bj = "http://emp.hnjing.com/emp_os/v1/station/"
         url = url_bj + station_id
         #编辑后名称
-        stationName = "测试岗位林"
+        stationName01 = ''.join(random.sample(['1', '4', '3', '2', '5', '6'], 3))
+        stationName02 = '测试岗位林'
+        stationName = stationName02 +stationName01
         params = {"stationName":stationName,"stationType":"0","departmentId":95,"modifier":"68"}
         station_bj = requests.put(url, data=json.dumps(params), headers=headers)
         result_bj = json.loads(station_bj.text)
+        print(result_bj)
         values = result_bj["rowNum"]
         result_exp = 1
         self.assertEqual(result_exp, values)
