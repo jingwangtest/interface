@@ -19,7 +19,7 @@ class Cpgl(unittest.TestCase):
         log_exp = Logger(logger="供应商平台_预期结果").getlog()
         log_act = Logger(logger="供应商平台_实际结果").getlog()
         log = Logger(logger="供应商平台").getlog()
-        params = {'mobilePhone': '15574841920', 'password': '123456', 'remember': 'true', 'siteName': 'main'}
+        params = {'mobilePhone': '15574841920', 'password': '123456', 'remember': True, 'siteName': 'main'}
         url = localReadConfig.get_http_cp('url_cp')
 
         headers = {

@@ -5,7 +5,9 @@
 import requests
 import json
 import readConfig as readConfig
+
 localReadConfig = readConfig.ReadConfig()
+
 
 class testlogin_001():
     # cp公共登陆组件
@@ -69,7 +71,7 @@ class testlogin_001():
         # r1 = requests.post(url, data=json.dumps(params), headers=headers).text
         # print('新增成功')
         token_act = requests.post(url, data=json.dumps(params), headers=headers)
-        print(token_act)
+        # print(token_act)
         s = json.loads(token_act.text)
         values = s["data"]["access_token"]
         return values
@@ -102,7 +104,7 @@ class testlogin_001():
         # url = localReadConfig.get_http_cp('url_cp')
         url = "http://www.ejw.cn/api/login"
         headers = {
-            'Content-Type': 'application/json;charset=UTF-8',
+            'Content-Type': 'application/json',
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:59.0) Gecko/20100101 Firefox/59.0',
             'Accept - Encoding': 'gzip, deflate',
             'Accept - Language': 'zh - CN, zh;q = 0.9',
@@ -116,10 +118,10 @@ class testlogin_001():
 
     # emp公共登陆组件
     def test_emplogin(self, token):
-        params = {"mobilePhone": "15116398872", "password": "123456", "remember": True, "siteName": "main"}
+        params = {"mobilePhone": "13025406605", "password": "123456", "remember": True, "siteName": "main"}
         # url = localReadConfig.get_http_cp('url_cp')
         url = "http://auth.ejw.cn/api/login"
-        headers ={
+        headers = {
             'Content-Type': 'application/json;charset=UTF-8',
             'user-id': '3',
             'Host': 'auth.ejw.cn',

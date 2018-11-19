@@ -186,7 +186,7 @@ class MySQL():
         empos1 = localReadConfig.get_db_empos1('database_empos1')
         conn = pymysql.connect(
             host=host,
-            port=port_3308,
+            port=port,
             user=username,
             passwd=password,
             db=empos1,

@@ -17,7 +17,7 @@ headers = {
 
 
 class admin_yygl(unittest.TestCase):
-    # 运营管理-合作伙伴管理-新增服务商
+    # 用户运营-合作伙伴管理-新增服务商
     def test_a001_yygl(self):
         global log
         log = Logger(logger="管理平台").getlog()
@@ -121,7 +121,7 @@ class admin_yygl(unittest.TestCase):
             self.assertEqual(result_exp, result_act, msg='审核原因：已存在相同用户企业或其它参数错误')
             log.info("企业客户管理-合作伙伴管理-供应商新增成功")
 
-    # 运营管理-合作伙伴管理-新增服务商
+    # 用户运营-合作伙伴管理-新增服务商
     def test_a002_yygl(self):
         name_01 = "湖南天劲制药有限责任公司"
         conn_partner = MySQL().connect_os1('conn')
@@ -223,7 +223,7 @@ class admin_yygl(unittest.TestCase):
             self.assertEqual(result_exp, result_act, msg='审核原因：已存在相同用户企业或其它参数错误')
             log.info("企业客户管理-合作伙伴管理-供应商新增成功")
 
-    # 运营管理-合作伙伴管理-不存在的查询
+    # 用户运营-合作伙伴管理-不存在的查询
     def test_a003_search(self):
         # 随机生成企业名称
         serach_01 = ''.join(random.sample(['8', '6', '3', '2', '5', '6'], 6))
@@ -241,7 +241,7 @@ class admin_yygl(unittest.TestCase):
         self.assertEqual(result_exp, result_act, msg='查询的结果与实际结果不一致')
         log.info("合作伙伴管理-不存在的用户查询成功")
 
-    # 运营管理-合作伙伴管理-存在的查询
+    # 用户运营-合作伙伴管理-存在的查询
     def test_a004_search(self):
         # global log
         # log = Logger(logger="管理平台").getlog()
@@ -262,7 +262,7 @@ class admin_yygl(unittest.TestCase):
         self.assertEqual(result_exp, result_act, "查询的日志结果不一致")
         log.info("合作伙伴管理-存在的信息查询成功")
 
-    # 运营管理-企业客户管理-存在的用户查询
+    # 用户运营-企业客户管理-存在的用户查询
     def test_b001_search(self):
         conn = MySQL().connect_portal1('conn')
         cur = conn.cursor()
@@ -277,7 +277,7 @@ class admin_yygl(unittest.TestCase):
         self.assertIn(parnername, qykh_test, msg="没有查询到此用户信息")
         log.info("企业客户管理-存在的用户查询成功")
 
-    # 运营管理-企业客户管理-不存在的用户查询
+    # 用户运营-企业客户管理-不存在的用户查询
     def test_b002_search(self):
         # 随机生成企业名称
         serach_01 = ''.join(random.sample(['8', '6', '3', '2', '5', '6', '0', 'a'], 8))
@@ -294,8 +294,39 @@ class admin_yygl(unittest.TestCase):
         self.assertEqual(result_exp, int(totalCount))
         log.info("企业客户管理-不存在的用户查询成功")
 
-    # 产品运营-产品授权审核-待审核
+    # 用户运营-企业客户管理-企业审核
     def test_b003_search(self):
+        try:
+            conn = MySQL().connect_portal1('conn')
+            cur1 = conn.cursor()
+            cur1.execute(
+                'select partner_id,partner_name,area,address,phone from partner where status=0 order by gmt_create desc')
+            par_result = cur1.fetchone()
+            partner_id, partner_name, area, address, phone = par_result[0], par_result[1], par_result[2], par_result[3], par_result[4]
+            print(partner_id, partner_name, area, address, phone)
+            url_01 = "http://admin.ejw.cn/platform/v1/partner/"
+            url = url_01 + str(partner_id)+'/audit?curEmpId=1720'
+            print(url)
+            params = {"partner": {"partnerName": partner_name, "area": area, "address": address, "phone": phone,
+                                  "detail": "", "partnerType": "0001", "organizeType": 1},
+                      "employees": {"empName": "盛秀玲", "phone": "15074980908", "email": "", "partnerId": 157, "userId": 92},
+                      "partnerExt": {"standardIndustry": "1"},
+                      "partnerBusiness": {"organizeType": 1, "uscCode": "066554132665266565", "businessCode": "",
+                                          "companyType": "长城", "registAddress": "台阶", "legalPerson": "灰尘", "scope": "功能",
+                                          "registAuthority": "功勋", "approvalDate": "2018-11-12", "registStatus": "正常",
+                                          "registCapital": 40000000}, "partnerQualifys": [
+                    {"qualifyType": 1, "qualifyName": "天天向上", "qualifyValidDate": "2019-11-30",
+                     "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/ddf61aa7eaa44621918daa0738ac8b49.jpg?authorization=bce-auth-v1%2Fed6cb82c3c054636aec25bdbc65d7c10%2F2018-11-05T09%3A40%3A35Z%2F-1%2F%2F0aedf26ba5e0a2a625ed4150e27d28b1b57551b920fc694967fe5431c643c903"}],
+                      "partnerAudit": {"status": 1}}
+            # print(json.dumps(params, ensure_ascii=False, indent=2))
+            result_act = requests.put(url, data=json.dumps(params), headers=headers).status_code
+            result_exp = 200
+            self.assertEqual(result_exp, result_act, msg="返回响应码不一致，请检查是否有错")
+        except TypeError:
+            print("数据库查询信息为空")
+
+    # 产品运营-产品授权审核-待审核
+    def test_b004_search(self):
         global log
         log = Logger(logger="管理平台").getlog()
         conn = MySQL().connect_platform1('conn')
@@ -323,49 +354,67 @@ class admin_yygl(unittest.TestCase):
             self.assertEqual(result_exp, result_act, msg='审核失败：没有存在的企业或其它参数错误')
             log.info("企业客户管理-合作伙伴管理-产品授权审核成功")
 
-    # # 运营管理-企业客户管理-合作伙伴管理-企业审核通过-停用
-    # def test_b004_search(self):
-    #     conn = MySQL().connect_os1('conn')
-    #     cur = conn.cursor()
-    #     cur.execute("select partner_id, partner_name from partner where `status`=1 and partner_type=0001")
-    #     cur_data = cur.fetchone()[0:2]
-    #     # print(cur_data)
-    #     partner_id = str(cur_data[0])
-    #     partner_name = cur_data[1]
-    #     print(partner_id, partner_name)
-    #     paramas = {"status": 0}
-    #     url_01 = 'http://admin.ejw.cn/platform/v1/partner/'
-    #     url = url_01 + partner_id + '/status'
-    #     # 发送服务商接口请求
-    #     shtg = requests.put(url, data=json.dumps(paramas), headers=headers)
-    #     # requests.get("http://admin.ejw.cn/os/v1/partners?sort=%7B%22gmtCreate%22%3A%22desc%22%7D&pageSize=10&pageNo=1&partnerType=0001%2C0011%2C0101%2C0111", headers=headers)
-    #     result_act = shtg.status_code
-    #     result_exp = 200
-    #     self.assertEqual(result_exp, result_act)
-    #     log.info("企业客户管理-合作伙伴管理-企业审核通过-停用成功")
+    # 用户运营-企业客户管理-合作伙伴管理-企业审核通过-停用
+    def test_b005_search(self):
+        conn = MySQL().connect_os1('conn')
+        cur = conn.cursor()
+        cur.execute("select partner_id, partner_name from partner where `status`=1 and partner_type=0001")
+        cur_data = cur.fetchone()
+        print(cur_data)
+        partner_id = str(cur_data[0])
+        partner_name = cur_data[1]
+        print(partner_id, partner_name)
+        paramas = {"status": 0}
+        url_01 = 'http://admin.ejw.cn/platform/v1/partner/'
+        url = url_01 + partner_id + '/status'
+        # 发送服务商接口请求
+        shtg = requests.put(url, data=json.dumps(paramas), headers=headers)
+        result_act = shtg.status_code
+        result_exp = 200
+        self.assertEqual(result_exp, result_act)
+        #log.info("企业客户管理-合作伙伴管理-企业审核通过-停用成功")
 
-    # # 运营管理-企业客户管理-合作伙伴管理-企业审核通过-启用
-    # def test_b005_search(self):
-    #     conn = MySQL().connect_os1('conn')
-    #     cur = conn.cursor()
-    #     cur.execute("select partner_id, partner_name from partner where `status`=0 and partner_type=0001")
-    #     cur_data = cur.fetchone()[0:2]
-    #     print(cur_data)
-    #     partner_id = str(cur_data[0])
-    #     partner_name = cur_data[1]
-    #     print(partner_id, partner_name)
-    #     paramas = {"status": 1}
-    #     url_01 = 'http://admin.ejw.cn/platform/v1/partner/'
-    #     url = url_01 + partner_id + '/status'
-    #     # 发送服务商接口请求
-    #     shtg = requests.put(url, data=json.dumps(paramas), headers=headers)
-    #     # requests.get("http://admin.ejw.cn/os/v1/partners?sort=%7B%22gmtCreate%22%3A%22desc%22%7D&pageSize=10&pageNo=1&partnerType=0001%2C0011%2C0101%2C0111", headers=headers)
-    #     result_exp = 200
-    #     result_act = shtg.status_code
-    #     self.assertEqual(result_exp, result_act, msg="企业审核不通过")
-    #     log.info("企业" + partner_name + "停用成功")
+    # 用户运营-企业客户管理-合作伙伴管理-企业审核通过-启用
+    def test_b006_search(self):
+        conn = MySQL().connect_os1('conn')
+        cur = conn.cursor()
+        url_sql = "select partner_id, partner_name from partner where `status`=0 and partner_type=0001"
+        cur.execute(url_sql)
+        cur_data = cur.fetchone()
+        print(cur_data)
+        partner_id = str(cur_data[0])
+        partner_name = cur_data[1]
+        print(partner_id, partner_name)
+        paramas = {"status": 1}
+        url_01 = 'http://admin.ejw.cn/platform/v1/partner/'
+        url = url_01 + partner_id + '/status'
+        # 发送服务商接口请求
+        shtg = requests.put(url, data=json.dumps(paramas), headers=headers)
+        result_act = shtg.status_code
+        result_exp = 200
+        self.assertEqual(result_exp, result_act)
+        #log.info("企业" + partner_name + "停用成功")
 
-    # 运营管理-企业客户管理-资质模板管理-新增
+    # 用户运营-企业客户管理-企业审核不通过-删除
+    def test_b007_search(self):
+        try:
+            conn = MySQL().connect_portal1('conn')
+            cur1 = conn.cursor()
+            cur1.execute(
+                'select partner_id from partner where `status`=2 ORDER BY gmt_create DESC;')
+            par_result = cur1.fetchone()
+            partner_id = par_result[0]
+            print(partner_id)
+            url_01 = "http://admin.ejw.cn/portal/v1/partnerall/"
+            url = url_01 + str(partner_id)
+            print(url)
+            result_act = requests.delete(url, headers=headers).status_code
+            result_exp = 200
+            self.assertEqual(result_exp, result_act, msg="返回响应码不一致，请检查是否有错")
+        except TypeError:
+            print("数据库查询信息为空,没有需要删除的企业客户")
+
+    # 用户运营-企业客户管理-资质模板管理-新增
     def test_c001_search(self):
         # 随机生成社会信用代码
         tempName_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 4))
@@ -469,6 +518,83 @@ class admin_yygl(unittest.TestCase):
         self.assertIn(keywords, result_act, "实际结果没有此用户名称")
         log.info("没有此用户信息")
 
+    # 用户运营-标准订单管理-输入正确的订单编号进行查询
+    def test_f001_search(self):
+        spOrderId = 's1540379515447'
+        url_01 = 'http://admin.ejw.cn/order/v1/orders?spOrderId='
+        url = url_01 + spOrderId
+        # 发送接口请求
+        result_act = requests.get(url, headers=headers).text
+        # 结果转换为json格式
+        result_act_act = json.loads(result_act)
+        # 获取data中第一个列表中的spOrderId字段
+        result = result_act_act["data"][0]["spOrderId"]
+        print(result, spOrderId)
+        self.assertEqual(spOrderId, result, msg="成功查询到该订单信息")
+        print("续期订单管理-正确的订单编号查询成功。订单编号为：" + spOrderId)
+
+    # 用户运营-标准订单管理-输入不存在的订单编号进行查询
+    def test_f002_search(self):
+        spOrderId = 's154037951544701'
+        url_01 = 'http://admin.ejw.cn/order/v1/orders?spOrderId='
+        url = url_01 + spOrderId
+        # 发送服务商接口请求
+        result_act = requests.get(url, headers=headers)
+        result = result_act.text
+        self.assertNotIn(spOrderId, result, msg="没有查询到该订单信息")
+        print("标准订单管理-不存在的订单编号查询成功。不存在该订单，订单编号为：" + spOrderId )
+
+    # 用户运营-充值订单管理-输入正确的订单编号进行查询
+    def test_f003_search(self):
+        chargeOrderId = 'a1540348408106'
+        url_01 = 'http://admin.ejw.cn/order/v1/chargeorders?chargeOrderId='
+        url = url_01 + chargeOrderId
+        # 发送服务商接口请求
+        result_act = requests.get(url, headers=headers).text
+        # 结果转换为json格式
+        result_act_act = json.loads(result_act)
+        # 获取data中第一个列表中的spOrderId字段
+        result = result_act_act["data"][0]["chargeOrderId"]
+        print(result, chargeOrderId)
+        self.assertEqual(chargeOrderId, result, msg="成功查询到该订单信息")
+        print("续期订单管理-正确的订单编号查询成功。订单编号为：" + chargeOrderId)
+
+    # 用户运营-充值订单管理-输入不存在的订单编号进行查询
+    def test_f004_search(self):
+        chargeOrderId = 'a154034840810601'
+        url_01 = 'http://admin.ejw.cn/order/v1/chargeorders?chargeOrderId='
+        url = url_01 + chargeOrderId
+        # 发送接口请求
+        result_act = requests.get(url, headers=headers)
+        result = result_act.text
+        self.assertNotIn(chargeOrderId, result, msg="成功查询到该订单信息")
+        print("充值订单管理-不存在的订单编号查询成功。不存在该订单，订单编号为：" + chargeOrderId)
+
+    # 用户运营-续期订单管理-输入正确的订单编号进行查询
+    def test_f005_search(self):
+        srvOrderId = 'b1540372446592'
+        url_01 = 'http://admin.ejw.cn/order/v1/srvorders?srvOrderId='
+        url = url_01 + srvOrderId
+        # 发送接口请求
+        result_act = requests.get(url, headers=headers).text
+        # 结果转换为json格式
+        result_act_act = json.loads(result_act)
+        # 获取data中第一个列表中的spOrderId字段
+        result = result_act_act["data"][0]["srvOrderId"]
+        print(result, srvOrderId)
+        self.assertEqual(srvOrderId, result, msg="成功查询到该订单信息")
+        print("续期订单管理-正确的订单编号查询成功。订单编号为：" + srvOrderId)
+
+    # 用户运营-续期订单管理-输入不存在的订单编号进行查询
+    def test_f006_search(self):
+        srvOrderId = 'b154037244659201'
+        url_01 = 'http://admin.ejw.cn/order/v1/srvorders?srvOrderId='
+        url = url_01 + srvOrderId
+        # 发送接口请求
+        result_act = requests.get(url, headers=headers)
+        result = result_act.text
+        self.assertNotIn(srvOrderId, result, msg="成功查询到该订单信息")
+        print("续期订单管理-不存在的订单编号查询成功。不存在该订单，订单编号为：" + srvOrderId)
 
 if __name__ == '__main__':
     unittest.main()

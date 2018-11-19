@@ -70,7 +70,43 @@ class Cu(unittest.TestCase):
         print(result_exp_pro, result)
         self.assertEqual(result_exp_pro, result, msg="请求参数异常或加入购物车失败")
 
+    # 企业后台-已购产品-充值产品下单
+    def test_b001_search(self):
+        url = 'http://cu.ejw.cn/order/v1/cu/176/chargeorder'
+        paramas = {"cuPartnerName": "客户库合并合作伙伴验证-盛秀玲20171103", "resUrl": "", "systemType": "0",
+                   "resSystem": "1", "orderDesc": "", "spChargeAttrId": 156, "amount": 1, "cuEmpId": 2143,
+                   "cuEmpName": "蒋涛", "invoiceType": "1", "payType": "0", "spPartnerId": 502,
+                   "spPartnerName": "竞网自动化勿删",
+                   "spOrderId": "s1542332904546", "chargeAccout": "CZ520", "sellPrice": "100.00"}
+        # 发送接口请求
+        czcp = requests.post(url, data=json.dumps(paramas), headers=headers)
+        # 设置预期的状态码是 200
+        result_exp = 200
+        # 获取实际返回的状态码
+        result_act = czcp.status_code
+        # 判断实际返回的状态码是否与预期设置的状态码相同
+        self.assertEqual(result_exp, result_act)
+        # 输出接口返回的数据，此处返回订单编号
+        print(czcp.text)
 
+    # 企业后台-已购产品-续期产品下单
+    def test_b002_search(self):
+        url = 'http://cu.ejw.cn/order/v1/cu/176/srvtimeorder'
+        paramas = {"cuPartnerName": "客户库合并合作伙伴验证-盛秀玲20171103", "resUrl": "", "systemType": "0", "resSystem": "1",
+                   "orderDesc": "", "spSrvtimeAttrId": 106, "spAttrId": 182, "attrName": "1年", "sellPrice": "200.00",
+                   "amount": 1,
+                   "cuEmpId": 2143, "cuEmpName": "蒋涛", "payType": "0", "invoiceType": "1", "spPartnerId": 502,
+                   "spPartnerName": "竞网自动化勿删", "spOrderId": "s1542332904546", "srvtimeAccout": "XQ520"}
+        # 发送接口请求
+        xqcp = requests.post(url, data=json.dumps(paramas), headers=headers)
+        # 设置预期的状态码是 200
+        result_exp = 200
+        # 获取实际返回的状态码
+        result_act = xqcp.status_code
+        # 判断实际返回的状态码是否与预期设置的状态码相同
+        self.assertEqual(result_exp, result_act)
+        # 输出接口返回的数据，此处返回订单编号
+        print(xqcp.text)
 
 if __name__ == '__main__':
     unittest.main()
