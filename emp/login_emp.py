@@ -1,10 +1,9 @@
 import requests
 import json
-from comm.login import testlogin_001
-
+from comm.login import Zpt
 
 # #请求头信息
-token = testlogin_001().test_emplogin('token')
+token = Zpt().test_emp_login()
 url = "http://emp.hnjing.com/api/login"
 
 # 指定头文件
@@ -13,12 +12,11 @@ headers = {
     'token': token
 }
 
-class testlogin_001():
-    def emplogin(self, token):
+
+class Emp:
+    @staticmethod
+    def emp_login():
         token_act = requests.get(url, headers=headers)
         s = json.loads(token_act.text)
         values = s["data"]["token"]
         return values
-
-
-
