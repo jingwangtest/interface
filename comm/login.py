@@ -5,15 +5,15 @@
 import requests
 import json
 import readConfig as readConfig
-
 localReadConfig = readConfig.ReadConfig()
 
 
-class testlogin_001():
+class Zpt:
     # cp公共登陆组件
-    def test_cplogin(self, token):
+    @staticmethod
+    def cp_login():
         params = {'mobilePhone': '13025406605', 'password': '123456', 'remember': True, 'siteName': 'main'}
-        url = localReadConfig.get_http_cp('url_cp')
+        url = localReadConfig.get_http_cp()
 
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',
@@ -33,9 +33,10 @@ class testlogin_001():
         return values
 
     # sp公共登陆组件
-    def test_splogin(self, token):
+    @staticmethod
+    def sp_login():
         params = {'mobilePhone': '13025406605', 'password': '123456', 'remember': True, 'siteName': 'main'}
-        url = localReadConfig.get_http_sp('url_sp')
+        url = localReadConfig.get_http_sp()
 
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',
@@ -55,9 +56,10 @@ class testlogin_001():
         return values
 
     # cu公共登陆组件
-    def test_culogin(self, token):
+    @staticmethod
+    def cu_login():
         params = {'mobilePhone': '13025406605', 'password': '123456', 'remember': True, 'siteName': 'main'}
-        url = localReadConfig.get_http_cu('url_cu')
+        url = localReadConfig.get_http_cu()
 
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',
@@ -77,7 +79,8 @@ class testlogin_001():
         return values
 
     # admin公共登陆组件
-    def test_adminlogin(self, token):
+    @staticmethod
+    def test_admin_login():
         params = {'mobilePhone': '18600000000', 'password': '123456', 'remember': True, 'siteName': 'main'}
         url = "http://admin.ejw.cn/api/login"
 
@@ -99,7 +102,8 @@ class testlogin_001():
         return values
 
     # www1公共登陆组件
-    def test_www1login(self, token):
+    @staticmethod
+    def test_www_login():
         params = {"mobilePhone": "13025406605", "password": "123456", "remember": True, "siteName": "main"}
         # url = localReadConfig.get_http_cp('url_cp')
         url = "http://www.ejw.cn/api/login"
@@ -117,7 +121,8 @@ class testlogin_001():
         return values
 
     # emp公共登陆组件
-    def test_emplogin(self, token):
+    @staticmethod
+    def test_emp_login():
         params = {"mobilePhone": "13025406605", "password": "123456", "remember": True, "siteName": "main"}
         # url = localReadConfig.get_http_cp('url_cp')
         url = "http://auth.ejw.cn/api/login"

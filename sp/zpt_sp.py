@@ -51,7 +51,7 @@ class sp_dpgl_01(unittest.TestCase):
         # 查询出当前要删除案例的id信息
         cur.execute('select case_id from class_case_info t where t.sp_id = "' + sql_data + '"')
         case_id = str(cur.fetchall()[0][0])
-        #print('select case_id from class_case_info t where t.sp_id = "' + sql_data + '"')
+        # print('select case_id from class_case_info t where t.sp_id = "' + sql_data + '"')
         url_01 = 'http://sp.ejw.cn/mall/v1/classcaseinfo/'
         url = url_01 + case_id
         result_act = requests.delete(url, headers=headers).text
@@ -146,8 +146,8 @@ class sp_dpgl_01(unittest.TestCase):
     #     log.info(result_act)
     #     log.info("不存在的用户查询成功")
 
-    # 店铺管理-产品管理-我发布的的产品-发布产品-产品名称查询
-    # 产品管理-我发布的的产品-发布产品-产品名称查询
+    # 店铺管理-方案管理-我发布的的产品-发布产品-产品名称查询
+    # 方案管理-我发布的的产品-发布产品-产品名称查询
     def test_c001_product_search(self):
         conn = MySQL().connect_ps1('conn')
         cur = conn.cursor()
@@ -165,7 +165,7 @@ class sp_dpgl_01(unittest.TestCase):
         log_act.info(result_act)
         log.info("查询该产品信息成功")
 
-    # 产品管理-我发布的产品-新增产品
+    # 方案管理-我发布的产品-新增产品
     def test_c002_product_add(self):
         prodctName_01 = ''.join(random.sample(['8', '6', '3', '2', '5', '6'], 4))
         prodctName_02 = '服务商标准产品发布'
@@ -193,7 +193,7 @@ class sp_dpgl_01(unittest.TestCase):
         log_act.info(result_act)
         log.info("服务商发布产品成功")
 
-    # 产品管理-产品上下架管理-已存在的产品名称查询
+    # 方案管理-产品上下架管理-已存在的产品名称查询
     def test_c005_product_serach(self):
         conn = MySQL().connect_ps1('conn')
         cur = conn.cursor()
@@ -209,7 +209,7 @@ class sp_dpgl_01(unittest.TestCase):
         self.assertIn(productName, result_act, msg="查询的产品名字不存在")
         log.info("已有产品名称查询成功")
 
-    # 产品管理-产品上下架管理-不存在的产品名称查询
+    # 方案管理-产品上下架管理-不存在的产品名称查询
     def test_c006_product_serach(self):
         productName = 'test11110001'
         log_exp.info(productName)
@@ -220,8 +220,7 @@ class sp_dpgl_01(unittest.TestCase):
         self.assertNotIn(productName, result_act, msg="查询异常或该产品已存在")
         log.info("未查询到该产品信息")
 
-
-    # 产品管理-供应商授权管理-全部-提交合同
+    # 方案管理-供应商授权管理-全部-提交合同
     def test_c007_product_verify(self):
         # 连接ps数据库
         conn1 = MySQL().connect_platform1('conn')
@@ -249,18 +248,18 @@ class sp_dpgl_01(unittest.TestCase):
         except TypeError:
             log.info("没有需要授权的产品信息")
 
-    # 产品管理-供应商授权管理-查询（不存在的）
+    # 方案管理-供应商授权管理-查询（不存在的）
     def test_c008_product_verify(self):
         productname = "aaaaaxxxxx"
         log_exp.info(productname)
         url_01 = "http://sp.ejw.cn/sp/v1/cp/products?sort=%7B%22createTime%22%3A%22desc%22%7D&pageNo=1&pageSize=10&typeId=&productName="
-        url = url_01+productname
+        url = url_01 + productname
         result_act = requests.get(url, headers=headers).text
         log_act.info(result_act)
         self.assertNotIn(productname, result_act, msg="查询数据异常")
         log.info("不存在的数据查询正常")
 
-    # 供应商授权管理-查找（全部）
+    # 方案管理-供应商授权管理-查找（全部）
     def test_c009_product_verify(self):
         url = "http://sp.ejw.cn/platform/v1/productauths?cpId=&spId=190&authId=&authType=&status=&pageSize=10&pageNo=1&sort=%7B%22gmtCreate%22%3A%22desc%22%7D"
         result_act = requests.get(url, headers=headers).text
@@ -268,7 +267,7 @@ class sp_dpgl_01(unittest.TestCase):
         self.assertIsNotNone(result_Count, msg="数据为空或查询异常")
         log_act.info("查询条数为:" + result_Count)
 
-    # 店铺管理-产品管理-供应商授权管理-详情
+    # 方案管理-供应商授权管理-详情
     def test_c010_product_verify(self):
         url = "http://sp.ejw.cn/os/v1/partners?partnerId=190"
         result_act = requests.get(url, headers=headers)
@@ -276,6 +275,29 @@ class sp_dpgl_01(unittest.TestCase):
         self.assertEqual(result_exp, result_act.status_code, msg="查看详情存在异常情况")
         log_act.info(result_act.text)
 
+    # 工单管理-标准订单-接单
+    def test_c011_order_verify(self):
+        try:
+            conn = MySQL().connect_order1("order1")
+            cur = conn.cursor()
+            cur.execute("select sp_order_id,order_id,pay_price from sp_order_info where sp_partner_id='502' and order_state=0")
+            ordering = cur.fetchone()[0:3]
+            sp_order_id = ordering[0]
+            order_id = ordering[1]
+            pay_price = ordering[2]
+            url = "http://sp.ejw.cn/order/v1/sp/502/order/" + sp_order_id + "/paystageinfo"
+            print(url)
+            params = {"spEmpId": 2121, "spEmpName": "蒋涛", "orderId": order_id,
+                      "spCusContractUrl": "https://bj.bcebos.com/v1/hnjing-test/d45fdb0150674e5baa969192921ad626.rar",
+                      "stages": [{"spOrderStageNo": 1, "payDesc": "aaaa", "payAmount": int(pay_price)}]}
+            print(params)
+            result_act = requests.post(url, data=json.dumps(params), headers=headers).status_code
+            print(result_act)
+            result_exp = 200
+            self.assertEqual(result_exp, str(result_act), msg='接单失败')
+            print("接单成功")
+        except TypeError:
+            print("没有找到需要接单的订单")
 
 if __name__ == '__main__':
     unittest.main()

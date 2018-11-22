@@ -4,46 +4,52 @@ import readConfig as readConfig
 import json
 import random
 from comm.public_data import MySQL
-from comm.login import testlogin_001
+from comm.login import Zpt
 from comm.Log import Logger
 
 # 获取配置文件地址url
 localReadConfig = readConfig.ReadConfig()
-token = testlogin_001().test_cplogin('token')
+token = Zpt().cp_login()
+
+# 指定头文件
+headers = {
+    'Content-Type': 'application/json;charset=UTF-8',
+    'token': token
+}
 
 
-class Cpgl(unittest.TestCase):
+class Cp(unittest.TestCase):
     # 验证登陆是否成功
-    def test_a001_login(self):
+    # def test_a001_login(self):
+    #     global log, log_exp, log_act
+    #     log_exp = Logger(logger="供应商平台_预期结果").getlog()
+    #     log_act = Logger(logger="供应商平台_实际结果").getlog()
+    #     log = Logger(logger="供应商平台").getlog()
+    #     params = {'mobilePhone': '13025406605', 'password': '123456', 'remember': True, 'siteName': 'main'}
+    #     url = localReadConfig.get_http_cp()
+    #
+    #     headers = {
+    #         'Content-Type': 'application/json;charset=UTF-8',
+    #         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:59.0) Gecko/20100101 Firefox/59.0',
+    #         'Accept - Encoding': 'gzip, deflate',
+    #         'Accept - Language': 'zh - CN, zh;q = 0.9',
+    #         'Referer': 'http://www1.ejw.cn/auth/?backUrl=http%3A%2F%2Fadmin.ejw.cn%2F%23%2F',
+    #         'X-Requested-With': 'XMLHttpRequest'
+    #     }
+    #     token_act = requests.post(url, data=json.dumps(params), headers=headers)
+    #     result_exp = 200
+    #     result_act = token_act.status_code
+    #     self.assertEqual(result_exp, result_act, msg="用户登陆失败")
+    #     log_exp.info(result_exp)
+    #     log_act.info(result_act)
+    #     log.info("用户登陆成功")
+
+    # 企业设置-部门员工管理-按已存在的姓名查询
+    def test_a002_bmyg_serach(self):
         global log, log_exp, log_act
         log_exp = Logger(logger="供应商平台_预期结果").getlog()
         log_act = Logger(logger="供应商平台_实际结果").getlog()
         log = Logger(logger="供应商平台").getlog()
-        params = {'mobilePhone': '15574841920', 'password': '123456', 'remember': True, 'siteName': 'main'}
-        url = localReadConfig.get_http_cp('url_cp')
-
-        headers = {
-            'Content-Type': 'application/json;charset=UTF-8',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:59.0) Gecko/20100101 Firefox/59.0',
-            'Accept - Encoding': 'gzip, deflate',
-            'Accept - Language': 'zh - CN, zh;q = 0.9',
-            'Referer': 'http://www1.ejw.cn/auth/?backUrl=http%3A%2F%2Fadmin.ejw.cn%2F%23%2F',
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-        token_act = requests.post(url, data=json.dumps(params), headers=headers)
-        result_exp = 200
-        result_act = token_act.status_code
-        self.assertEqual(result_exp, result_act, msg="用户登陆失败")
-        log_exp.info(result_exp)
-        log_act.info(result_act)
-        log.info("用户登陆成功")
-
-    # 智营销平台-企业设置-部门员工管理-按已存在的姓名查询
-    def test_a002_bmyg_serach(self):
-        headers = {
-            'Content-Type': 'application/json;charset=UTF-8',
-            'token': token
-        }
         empname = "蒋涛"
         url_01 = "http://cp.ejw.cn/cp/v1/partner/402/employees?depId=236&pageNo=1&pageSize=10&sort=%7B%22gmtCreate%22%3A%22desc%22%7D&curEmpId=1723&jobNoOrEmpName="
         url = url_01 + empname
@@ -54,12 +60,8 @@ class Cpgl(unittest.TestCase):
         log_act.info(result_act)
         log.info(empname + "查询成功")
 
-    # 智营销平台-企业设置-部门员工管理-按不存在的姓名查询
+    # 企业设置-部门员工管理-按不存在的姓名查询
     def test_a003_bmyg_serach(self):
-        headers = {
-            'Content-Type': 'application/json;charset=UTF-8',
-            'token': token
-        }
         empname = "xxxxxxxxxxxxxxxxxxx"
         url_01 = "http://cp.ejw.cn/cp/v1/partner/502/employees?pageNo=1&pageSize=10&sort=%7B%22gmtCreate%22%3A%22desc%22%7D&curEmpId=1723&jobNoOrEmpName="
         url = url_01 + empname
@@ -68,18 +70,13 @@ class Cpgl(unittest.TestCase):
         self.assertNotIn(empname, result_act, msg="没有查询到该用户信息")
         log.info(empname + "查询成功")
 
-    # 智营销平台-角色权限管理-新增角色
+    # 角色权限管理-新增角色
     def test_a004_role_add(self):
         name_02 = ''.join(random.sample(['a', 'b', 'c', 'd', 'e', '1', '5', '6', 'x', 'aaa'], 6))
         name_01 = '自动化测试角色'
         Name = name_01 + name_02
         # print(Name)
         url = "http://cp.ejw.cn/os/v1/partner/502/role"
-        headers = {
-            'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json;charset=UTF-8',
-            'token': token
-        }
         params = {"roleName": Name, "appName": "cp"}
         # print(params)
         role_code_act = requests.post(url, data=json.dumps(params), headers=headers).status_code
@@ -87,7 +84,7 @@ class Cpgl(unittest.TestCase):
         self.assertEqual(role_code_exp, role_code_act)
         log.info("角色新增成功")
 
-    # 智营销平台-企业设置-部门及员工管理-新增
+    # 企业设置-部门及员工管理-新增
     def test_a005_bmyg_add(self):
         empName = ''.join(random.sample(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'x', 'j'], 6))
         jobNo = ''.join(random.sample(['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], 6))
@@ -99,10 +96,6 @@ class Cpgl(unittest.TestCase):
         params = [{"roles": [1626], "departments": [{"depId": 523, "position": 1}], "empName": empName, "jobNo": jobNo,
                    "email": mail, "phone": mobile, "status": 1,
                    "entryDate": "2018-05-02T16:00:00.000Z"}]
-        headers = {
-            'Content-Type': 'application/json;charset=UTF-8',
-            'token': token
-        }
         url = "http://cp.ejw.cn/cp/v1/partner/502/employees"
         result_exp = requests.post(url, data=json.dumps(params), headers=headers).status_code
         result_act = 200
@@ -110,18 +103,12 @@ class Cpgl(unittest.TestCase):
         # log = Logger(logger="供应商平台").getlog()
         log.info(empName + "员工新增成功")
 
-    # 智营销平台-产品管理-发布产品
+    # 产品管理-发布产品
     def test_b001_fbcp(self):
         name_02 = ''.join(random.sample(['a', 'b', 'c', 'd', 'e', '1', '5', '6', 'x'], 6))
         name_01 = '供_自动化测试勿删'
         productName = name_01 + name_02
         # 请求下单功能
-        headers = {
-            'Content-Type': 'application/json;charset=UTF-8',
-            'token': token
-        }
-        # print(headers)
-        # 请求参数
         url = 'http://cp.ejw.cn/cp/v1/partner/502/product?curEmpId=2121'
         parms = {"typeId": 136, "productInfo": "<p>塑料袋</p>",
                  "images": "https://bj.bcebos.com/v1/hnjing-test/cb4ef37d38ff46c8bc74fdfc2bed6899.jpg",
@@ -144,13 +131,8 @@ class Cpgl(unittest.TestCase):
         self.assertIn(productName, respon_act, msg="参数异常")
         log.info("产品" + productName + "发布成功")
 
-    # 智营销平台-产品管理-产品名称查询
+    # 产品管理-产品名称查询
     def test_b002_cpmc_search(self):
-        # 请求下单功能
-        headers = {
-            'Content-Type': 'application/json;charset=UTF-8',
-            'token': token
-        }
         # 请求查询参数
         product_name = "%自动化测试%"
         url = 'http://cp.ejw.cn/ps/v1/cpproducts?pageNum=1&pageSize=20&_sort=modifyDate%2Cdesc&cpPartnerId=502&cpProductName=%E8%87%AA%E5%8A%A8%E5%8C%96'
@@ -159,21 +141,15 @@ class Cpgl(unittest.TestCase):
         totalCount_exp = result_json["page"]["totalCount"]
 
         # 连接数据库创建一个游标对象
-        conn = MySQL().connect_ps1("conn")
+        conn = MySQL().connect_ps1()
         cur = conn.cursor()
         cur.execute('select count(*) from cp_product t where t.cp_product_name like "' + product_name + '"')
         totalCount_act = cur.fetchone()[0]
         self.assertEqual(totalCount_exp, totalCount_act, "预期结果与实际结果不一致")
         log.info("已存在的产品名称验证成功")
 
-    # 智营销平台-产品管理-产品选择日期查询
+    # 产品管理-产品选择日期查询
     def test_b003_cpmc_search(self):
-        # 请求下单功能
-        headers = {
-            'Content-Type': 'application/json;charset=UTF-8',
-            'token': token
-        }
-        # print(headers)
         # 请求查询参数
         url_get = 'http://cp.ejw.cn/ps/v1/cpproducts?pageNum=1&pageSize=20&_sort=modifyDate%2Cdesc&cpPartnerId=502&modifyTimeStart=2018-10-14T16%3A00%3A00.000Z&modifyTimeEnd=2018-11-30T15%3A59%3A59.000Z'
         result_all = requests.get(url_get, headers=headers).text
@@ -182,7 +158,7 @@ class Cpgl(unittest.TestCase):
         # print(result_all)
 
         # 连接数据库
-        conn = MySQL().connect_ps1("conn")
+        conn = MySQL().connect_ps1()
         # 创建一个游标对象
         cur = conn.cursor()
         # order = "order by create_time desc"

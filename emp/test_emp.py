@@ -1,6 +1,7 @@
 import requests
 import unittest
 from emp.login_emp import testlogin_001
+from urllib.parse import quote
 
 # 请求头信息
 token = testlogin_001().emplogin('token')
@@ -11,8 +12,8 @@ headers = {
 }
 
 
-class emp_01(unittest.TestCase):
-    def test_oragn_002(self):
+class admin_yygl(unittest.TestCase):
+    def test_a001_serach(self):
         url_dz = "http://emp.hnjing.com/emp_os/v1/organs?pageNum=1&pageSize=20&organName="
         oragnname = "中天控股集团有限公司"
         url = url_dz + oragnname

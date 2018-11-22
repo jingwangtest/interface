@@ -3,13 +3,13 @@ import requests
 import random
 import json
 import unittest
-from comm.login import testlogin_001
+from comm.login import Zpt
 from comm.public_data import MySQL
 from comm.Log import Logger
 from urllib.parse import quote
 
 # 请求头信息
-token = testlogin_001().test_adminlogin('token')
+token = Zpt().test_admin_login()
 headers = {
     'Content-Type': 'application/json;charset=UTF-8',
     'token': token
@@ -18,11 +18,11 @@ headers = {
 
 class admin_yygl(unittest.TestCase):
     # 用户运营-合作伙伴管理-新增服务商
-    def test_a001_yygl(self):
+    def test_a001_fws(self):
         global log
         log = Logger(logger="管理平台").getlog()
         name_01 = "湖南天劲制药有限责任公司"
-        conn_partner = MySQL().connect_os1('conn')
+        conn_partner = MySQL().connect_os1()
         cur1 = conn_partner.cursor()
         cur1.execute('select partner_id from partner where partner_name ="' + name_01 + '"')
         par_result = cur1.fetchone()
@@ -121,10 +121,10 @@ class admin_yygl(unittest.TestCase):
             self.assertEqual(result_exp, result_act, msg='审核原因：已存在相同用户企业或其它参数错误')
             log.info("企业客户管理-合作伙伴管理-供应商新增成功")
 
-    # 用户运营-合作伙伴管理-新增服务商
-    def test_a002_yygl(self):
+    # 用户运营-合作伙伴管理-新增供应商
+    def test_a002_gys(self):
         name_01 = "湖南天劲制药有限责任公司"
-        conn_partner = MySQL().connect_os1('conn')
+        conn_partner = MySQL().connect_os1()
         cur1 = conn_partner.cursor()
         cur1.execute('select partner_id from partner where partner_name ="' + name_01 + '"')
         par_result = cur1.fetchone()
@@ -243,11 +243,11 @@ class admin_yygl(unittest.TestCase):
 
     # 用户运营-合作伙伴管理-存在的查询
     def test_a004_search(self):
-        # global log
-        # log = Logger(logger="管理平台").getlog()
-        conn = MySQL().connect_os1('conn')
+        global log
+        log = Logger(logger="管理平台").getlog()
+        conn = MySQL().connect_os1()
         cur = conn.cursor()
-        cur.execute("select partner_name from partner where partner_name='竞网测试同步23s'")
+        cur.execute("select partner_name from partner where partner_name='竞网测试同步'")
         parnername = str(cur.fetchone()[0])
         url_01 = 'http://admin.ejw.cn/os/v1/partners?pageNo=1&pageSize=10&partnerType=0010%2C0011%2C0100%2C0101%2C0111%2C0110&partnerName='
         url = url_01 + parnername
@@ -264,7 +264,7 @@ class admin_yygl(unittest.TestCase):
 
     # 用户运营-企业客户管理-存在的用户查询
     def test_b001_search(self):
-        conn = MySQL().connect_portal1('conn')
+        conn = MySQL().connect_portal1()
         cur = conn.cursor()
         cur.execute("select partner_name from partner where `status`=0")
         parnername = str(cur.fetchone()[0])
@@ -297,7 +297,7 @@ class admin_yygl(unittest.TestCase):
     # 用户运营-企业客户管理-企业审核
     def test_b003_search(self):
         try:
-            conn = MySQL().connect_portal1('conn')
+            conn = MySQL().connect_portal1()
             cur1 = conn.cursor()
             cur1.execute(
                 'select partner_id,partner_name,area,address,phone from partner where status=0 order by gmt_create desc')
@@ -329,7 +329,7 @@ class admin_yygl(unittest.TestCase):
     def test_b004_search(self):
         global log
         log = Logger(logger="管理平台").getlog()
-        conn = MySQL().connect_platform1('conn')
+        conn = MySQL().connect_platform1()
         cur = conn.cursor()
         cur.execute(
             "select record_id from product_auth where `status`=3;")
@@ -356,7 +356,7 @@ class admin_yygl(unittest.TestCase):
 
     # 用户运营-企业客户管理-合作伙伴管理-企业审核通过-停用
     def test_b005_search(self):
-        conn = MySQL().connect_os1('conn')
+        conn = MySQL().connect_os1()
         cur = conn.cursor()
         cur.execute("select partner_id, partner_name from partner where `status`=1 and partner_type=0001")
         cur_data = cur.fetchone()
@@ -376,7 +376,7 @@ class admin_yygl(unittest.TestCase):
 
     # 用户运营-企业客户管理-合作伙伴管理-企业审核通过-启用
     def test_b006_search(self):
-        conn = MySQL().connect_os1('conn')
+        conn = MySQL().connect_os1()
         cur = conn.cursor()
         url_sql = "select partner_id, partner_name from partner where `status`=0 and partner_type=0001"
         cur.execute(url_sql)
@@ -398,7 +398,7 @@ class admin_yygl(unittest.TestCase):
     # 用户运营-企业客户管理-企业审核不通过-删除
     def test_b007_search(self):
         try:
-            conn = MySQL().connect_portal1('conn')
+            conn = MySQL().connect_portal1()
             cur1 = conn.cursor()
             cur1.execute(
                 'select partner_id from partner where `status`=2 ORDER BY gmt_create DESC;')
@@ -433,7 +433,7 @@ class admin_yygl(unittest.TestCase):
 
     # 产品管理-产品授权-待审核
     def test_d001_spsq_dsh(self):
-        conn = MySQL().connect_platform1('conn')
+        conn = MySQL().connect_platform1()
         cur = conn.cursor()
         cur.execute('select record_id,auth_id from product_auth where `status`= 3')
         cur_data = cur.fetchone()
@@ -459,7 +459,7 @@ class admin_yygl(unittest.TestCase):
 
     # 产品运营-产品审核-待审核
     def test_d002_spsq_dsh(self):
-        conn = MySQL().connect_platform1('conn')
+        conn = MySQL().connect_platform1()
         cur = conn.cursor()
         cur.execute('select verify_id,product_id from product_verify where `status` = 0')
         cur_data = cur.fetchone()[0:2]

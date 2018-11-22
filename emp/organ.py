@@ -22,20 +22,7 @@ headers = {
 
 
 class emp_01(unittest.TestCase):
-    # 系统管理-组织管理-机构管理-新增机构
-    # def test_oragn_001(self):
-    # organName = '长沙伊特诺教育咨询有限公司'
-    # url = "http://emp.hnjing.com/emp_os/v1/organ"
-    # params = {"organName":"长沙伊特诺教育咨询有限公司","sharesType":0,
-    #          "oragnShortName":"教育咨询","oragnShortEname":"zixun","partnerId":190,"creator":68}
-    # organ_add = requests.post(url,data=json.dumps(params),headers=headers)
-    # result_add = organ_add.text
-    # result_exp = 1
-    # self.assertIn(result_exp,int(result_add))
-    # print("新增机构成功")
-
-    # 系统管理-组织管理-机构管理-查询机构
-    def test_oragn_002(self):
+    def test_002_oragn(self):
         url_dz = "http://emp.hnjing.com/emp_os/v1/organs?pageNum=1&pageSize=20&organName="
         oragnname = "中天控股集团有限公司"
         url = url_dz + oragnname
