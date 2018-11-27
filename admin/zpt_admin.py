@@ -302,17 +302,20 @@ class admin_yygl(unittest.TestCase):
             cur1.execute(
                 'select partner_id,partner_name,area,address,phone from partner where status=0 order by gmt_create desc')
             par_result = cur1.fetchone()
-            partner_id, partner_name, area, address, phone = par_result[0], par_result[1], par_result[2], par_result[3], par_result[4]
+            partner_id, partner_name, area, address, phone = par_result[0], par_result[1], par_result[2], par_result[3], \
+                                                             par_result[4]
             print(partner_id, partner_name, area, address, phone)
             url_01 = "http://admin.ejw.cn/platform/v1/partner/"
-            url = url_01 + str(partner_id)+'/audit?curEmpId=1720'
+            url = url_01 + str(partner_id) + '/audit?curEmpId=1720'
             print(url)
             params = {"partner": {"partnerName": partner_name, "area": area, "address": address, "phone": phone,
                                   "detail": "", "partnerType": "0001", "organizeType": 1},
-                      "employees": {"empName": "盛秀玲", "phone": "15074980908", "email": "", "partnerId": 157, "userId": 92},
+                      "employees": {"empName": "盛秀玲", "phone": "15074980908", "email": "", "partnerId": 157,
+                                    "userId": 92},
                       "partnerExt": {"standardIndustry": "1"},
                       "partnerBusiness": {"organizeType": 1, "uscCode": "066554132665266565", "businessCode": "",
-                                          "companyType": "长城", "registAddress": "台阶", "legalPerson": "灰尘", "scope": "功能",
+                                          "companyType": "长城", "registAddress": "台阶", "legalPerson": "灰尘",
+                                          "scope": "功能",
                                           "registAuthority": "功勋", "approvalDate": "2018-11-12", "registStatus": "正常",
                                           "registCapital": 40000000}, "partnerQualifys": [
                     {"qualifyType": 1, "qualifyName": "天天向上", "qualifyValidDate": "2019-11-30",
@@ -372,7 +375,7 @@ class admin_yygl(unittest.TestCase):
         result_act = shtg.status_code
         result_exp = 200
         self.assertEqual(result_exp, result_act)
-        #log.info("企业客户管理-合作伙伴管理-企业审核通过-停用成功")
+        # log.info("企业客户管理-合作伙伴管理-企业审核通过-停用成功")
 
     # 用户运营-企业客户管理-合作伙伴管理-企业审核通过-启用
     def test_b006_search(self):
@@ -393,7 +396,7 @@ class admin_yygl(unittest.TestCase):
         result_act = shtg.status_code
         result_exp = 200
         self.assertEqual(result_exp, result_act)
-        #log.info("企业" + partner_name + "停用成功")
+        # log.info("企业" + partner_name + "停用成功")
 
     # 用户运营-企业客户管理-企业审核不通过-删除
     def test_b007_search(self):
@@ -542,7 +545,7 @@ class admin_yygl(unittest.TestCase):
         result_act = requests.get(url, headers=headers)
         result = result_act.text
         self.assertNotIn(spOrderId, result, msg="没有查询到该订单信息")
-        print("标准订单管理-不存在的订单编号查询成功。不存在该订单，订单编号为：" + spOrderId )
+        print("标准订单管理-不存在的订单编号查询成功。不存在该订单，订单编号为：" + spOrderId)
 
     # 用户运营-充值订单管理-输入正确的订单编号进行查询
     def test_f003_search(self):
@@ -595,6 +598,29 @@ class admin_yygl(unittest.TestCase):
         result = result_act.text
         self.assertNotIn(srvOrderId, result, msg="成功查询到该订单信息")
         print("续期订单管理-不存在的订单编号查询成功。不存在该订单，订单编号为：" + srvOrderId)
+
+    # 订单管理-仲裁管理-同意退款
+    def test_h001_search(self):
+        try:
+            conn = MySQL().connect_order1()
+            cur = conn.cursor()
+            cur.execute(
+                "select examine_auth_id from refund_examine where examine_state=0 and order_comp_id=176")
+            ordering = cur.fetchone()[0:1]
+            examine_auth_id = str(ordering[0])
+            url = "http://admin.ejw.cn/platform/v1/arbitrate/" + examine_auth_id + "?curEmpId=1720"
+            print(url)
+            params = {"examineState": 1, "examineSuggest": "", "refundAmount": 1, "examineEmpId": 1720,
+                      "examineEmpName": "蒋涛", "spOrderStageNo": 1, "orderEmpId": 176, "orderCompId": 176, "useCost": 0,
+                      "refundFee": 0}
+            result_act = requests.put(url, data=json.dumps(params), headers=headers)
+            # print(result_act.text)
+            result_exp = 200
+            self.assertEqual(result_exp, result_act.status_code, msg='发送仲裁失败')
+            print("申请仲裁成功")
+        except TypeError:
+            print("没有找到需要仲裁的订单")
+
 
 if __name__ == '__main__':
     unittest.main()

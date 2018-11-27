@@ -25,18 +25,42 @@ oper_id = '68'
 
 class organ01(unittest.TestCase):
     # 系统管理-组织管理-机构管理-新增机构
-    # def test_a001oragn(self):
-        # 连接数据库获取已授权的企业
-        # conn = MySQL().
-        # organName = '长沙伊特诺教育咨询有限公司'
-        # url = "http://emp.hnjing.com/emp_os/v1/organ"
-        # params = {"organName":organName,"sharesType":0,
-        #      "oragnShortName":"教育咨询","oragnShortEname":"zixun","partnerId":190,"creator":68}
-        # organ_add = requests.post(url,data=json.dumps(params),headers=headers)
-        # result_add = organ_add.text
-        # result_exp = 1
-        # self.assertIn(result_exp,int(result_add))
-        # print("新增机构成功")
+    def test_a001oragn(self):
+        # 连接openapi数据库获取已授权的企业
+        conn = MySQL().connect_open_api()
+        cur1 = conn.cursor()
+        cur1.execute('select partner_id from app_comp_auth where status = 1')
+        partner1 = cur1.fetchall()
+        # 连接empos数据库获取已关联机构企业
+        conn = MySQL().connect_emp_os()
+        cur2 = conn.cursor()
+        cur2.execute('select partner_id from organ where deleted = 1')
+        partner2 = cur2.fetchall()
+        vaules = tuple(set(partner1) - set(partner2))
+        partner_id = str(vaules[0][0])
+        print(partner_id)
+        # 连接openapi库获取企业名称
+        conn = MySQL().connect_open_api()
+        cur3 = conn.cursor()
+        cur3.execute('select partner_name from os_partner where partner_id = "' + partner_id + '" ')
+        partnername = cur3.fetchone()[0]
+        print(partnername)
+        shortEname01 = "zidong"
+        shortEname02 = ''.join(random.sample(['a', 'b', 'c', 'd', 'e', 'f', 'p', 'u'], 3))
+        shortEname = shortEname01 + shortEname02
+        shortname = partnername[0:5]
+        print(shortname)
+        url = "http://emp.hnjing.com/emp_os/v1/organ"
+        params = {"organName": partnername, "sharesType": 0,
+                  "oragnShortName": shortname, "oragnShortEname": shortEname, "partnerId": partner_id,
+                  "creator": oper_id}
+        organ_add = requests.post(url, data=json.dumps(params), headers=headers)
+        result_add = json.loads(organ_add.text)
+        print(result_add)
+        result = result_add["rowNum"]
+        result_exp = 1
+        self.assertEqual(result_exp, result)
+        print("新增机构成功")
 
     # 系统管理-组织管理-机构管理-查询机构
     def test_a002oragn(self):
@@ -54,7 +78,8 @@ class organ01(unittest.TestCase):
         # deptName01 = ''.join(random.sample(['1', '4', '3', '2', '5', '6'], 3))
         # deptNmame02 = '新增部门张'
         deptName = '新增部门张'
-        params = {"departmentName": deptName, "departmentType": 0, "creator": oper_id, "absPath": "/93/", "parentId": 93}
+        params = {"departmentName": deptName, "departmentType": 0, "creator": oper_id, "absPath": "/93/",
+                  "parentId": 93}
         dept_add = requests.post(url, data=json.dumps(params), headers=headers)
         result_add = dept_add.text
         self.assertIn(deptName, result_add)
@@ -63,7 +88,7 @@ class organ01(unittest.TestCase):
     # 系统管理-组织管理-组织架构-删除部门
     def test_b002dept(self):
         # 连接数据库
-        conn = MySQL().connect_open_api()
+        conn = MySQL().connect_emp_os()
         cur = conn.cursor()
         cur.execute(
             'select department_id,department_name from department where department_type = 0 and deleted = 1 and department_name = "新增部门张" ')
@@ -83,7 +108,7 @@ class organ01(unittest.TestCase):
     # 系统管理-组织管理-组织架构-编辑部门
     def test_b003dept(self):
         # 连接数据库
-        conn = MySQL().connect_open_api()
+        conn = MySQL().connect_emp_os()
         cur = conn.cursor()
         cur.execute('select department_id,department_name from department ')
         dept = cur.fetchone()[0:2]
@@ -121,7 +146,7 @@ class organ01(unittest.TestCase):
     # 系统管理-组织管理-组织架构-删除岗位
     def test_c002station(self):
         # 连接数据库
-        conn = MySQL().connect_open_api()
+        conn = MySQL().connect_emp_os()
         cur = conn.cursor()
         cur.execute(
             'select station_id,station_name from station where station_type = 0 and deleted = 1 and station_name = "新增岗位林" ')
@@ -141,7 +166,7 @@ class organ01(unittest.TestCase):
     # 系统管理-组织管理-组织架构-编辑岗位
     def test_c003station(self):
         # 连接数据库
-        conn = MySQL().connect_open_api()
+        conn = MySQL().connect_emp_os()
         cur = conn.cursor()
         cur.execute('select station_id,station_name from station ')
         station = cur.fetchone()[0:2]
@@ -178,8 +203,8 @@ class organ01(unittest.TestCase):
 
     # 系统管理-组织管理-角色管理-编辑角色（停用角色）
     def test_d002role(self):
-        #连接数据库获取role_id
-        conn = MySQL().connect_open_api()
+        # 连接数据库获取role_id
+        conn = MySQL().connect_emp_os()
         cur = conn.cursor()
         cur.execute('select role_id,role_name from role where role_name like "自动化角色%" and status = 1 ')
         role = cur.fetchone()[0:2]
@@ -187,7 +212,7 @@ class organ01(unittest.TestCase):
         role_name = role[1]
         url_bj = "http://emp.hnjing.com/emp_os/v1/role/"
         url = url_bj + role_id
-        params = {"roleId":role_id,"roleName":role_name,"status":0,"opIds":"1,2,3,4,5,6"}
+        params = {"roleId": role_id, "roleName": role_name, "status": 0, "opIds": "1,2,3,4,5,6"}
         role_bj = requests.put(url, data=json.dumps(params), headers=headers)
         result_bj = role_bj.text
         result_exp = "修改角色信息成功"
@@ -196,8 +221,8 @@ class organ01(unittest.TestCase):
 
     # 系统管理-组织管理-角色管理-编辑角色（启用角色）
     def test_d003role(self):
-        #连接数据库获取role_id
-        conn = MySQL().connect_open_api()
+        # 连接数据库获取role_id
+        conn = MySQL().connect_emp_os()
         cur = conn.cursor()
         cur.execute('select role_id,role_name from role where role_name like "自动化角色%" and status = 0 ')
         role = cur.fetchone()[0:2]
@@ -205,7 +230,7 @@ class organ01(unittest.TestCase):
         role_name = role[1]
         url_bj = "http://emp.hnjing.com/emp_os/v1/role/"
         url = url_bj + role_id
-        params = {"roleId":role_id,"roleName":role_name,"status":1,"opIds":"1,2,3,4,5,6"}
+        params = {"roleId": role_id, "roleName": role_name, "status": 1, "opIds": "1,2,3,4,5,6"}
         role_bj = requests.put(url, data=json.dumps(params), headers=headers)
         result_bj = role_bj.text
         result_exp = "修改角色信息成功"
@@ -223,15 +248,16 @@ class organ01(unittest.TestCase):
         self.assertIn(roleName, values)
         print("查询角色成功")
 
-    #系统管理-组织管理-员工管理-新增员工（邀请员工）
+    # 系统管理-组织管理-员工管理-新增员工（邀请员工）
     def test_e001employ(self):
         url = "http://emp.hnjing.com/emp_os/v1/employee"
         employeeName01 = "自动化测试"
         employeeName02 = ''.join(random.sample(['1', '2', '3', '5', '7', '9', '8'], 3))
         employeeName = employeeName01 + employeeName02
         employeeNo = str(''.join(random.sample(['1', '2', '3', '5', '7', '9', '8', '4', '6'], 4)))
-        params = {"employeeNo":employeeNo,"employeeName":employeeName,"email":"linshu@hnjing.com","phone":"15116398872",
-                  "creator":oper_id,"depStations":[{"departmentId":93,"stationId":113,"isMaster":1}]}
+        params = {"employeeNo": employeeNo, "employeeName": employeeName, "email": "linshu@hnjing.com",
+                  "phone": "15116398872",
+                  "creator": oper_id, "depStations": [{"departmentId": 93, "stationId": 113, "isMaster": 1}]}
         employ_add = requests.post(url, data=json.dumps(params), headers=headers)
         result_add = json.loads(employ_add.text)
         values = result_add["rowNum"]
@@ -239,12 +265,13 @@ class organ01(unittest.TestCase):
         self.assertEqual(result_exp, values)
         print("发送邀请员工邮件")
 
-    #系统管理-组织管理-员工管理-员工离职
+    # 系统管理-组织管理-员工管理-员工离职
     def test_e004employ(self):
-        #连接数据库获取employee_id
-        conn = MySQL().connect_open_api()
+        # 连接数据库获取employee_id
+        conn = MySQL().connect_emp_os()
         cur = conn.cursor()
-        cur.execute('select employee_id from employee where employee_name like "自动化测试%" and deleted = 1 and status != 2 ')
+        cur.execute(
+            'select employee_id from employee where employee_name like "自动化测试%" and deleted = 1 and status != 2 ')
         employee_id = str(cur.fetchone()[0])
         url_del = "http://emp.hnjing.com/emp_os/v1/employee/"
         url = url_del + employee_id
@@ -254,6 +281,7 @@ class organ01(unittest.TestCase):
         result_exp = 1
         self.assertEqual(result_exp, values)
         print("员工离职")
+
 
 if __name__ == '__main__':
     unittest.main()

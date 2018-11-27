@@ -83,7 +83,8 @@ class Cu(unittest.TestCase):
             uuid = cur.fetchone()[0]
             url = "http://cu.ejw.cn/order/v1/cu/176/order"
             params = {
-                "order": {"cuPartnerName": "客户库合并合作伙伴验证-盛秀玲20171103", "cuEmpId": 2143, "cuEmpName": "蒋涛", "systemType": "0",
+                "order": {"cuPartnerName": "客户库合并合作伙伴验证-盛秀玲20171103", "cuEmpId": 2143, "cuEmpName": "蒋涛",
+                          "systemType": "0",
                           "resSystem": "1", "orderDesc": "自动化测试订单功能"},
                 "deliveryAddr": {"recName": "2222222000", "recPhone": "15000000000", "recPost": "333333",
                                  "recAddr": "山东 济南 槐荫区 33333333333333333333333333333333", "deliveryDesc": ""},
@@ -158,6 +159,59 @@ class Cu(unittest.TestCase):
             print("付款成功")
         except TypeError:
             print("没有找到需要付款的订单")
+
+    # 企业后台-订单管理-标准订单管理-申请退款
+    def test_d002_pay(self):
+        try:
+            conn = MySQL().connect_order1()
+            cur = conn.cursor()
+            cur.execute(
+                "select b.pay_id,a.sp_order_id, b.pay_amount from sp_order_info a, pay_stage_info b where a.order_state=1 and a.sp_partner_id=502 and b.pay_state=1 and a.sp_order_id=b.sp_order_id;")
+            ordering = cur.fetchone()[0:3]
+            sp_order_id = str(ordering[1])
+            pay_id = str(ordering[0])
+            pay_amount = ordering[2]
+            url = "http://cu.ejw.cn/order/v1/partner/502/order/" + sp_order_id + "/paystageinfo/" + pay_id
+            print(url)
+            params = {"nodeSuggest": "退款申请", "payState": "4", "cuEmpId": 2143, "refundAmount": int(pay_amount),
+                      "spPartnerName": "竞网自动化勿删"}
+            result_act = requests.put(url, data=json.dumps(params), headers=headers)
+            print(result_act.text)
+            result_exp = 200
+            self.assertEqual(result_exp, result_act.status_code, msg='退款申请失败')
+            print("退款申请成功")
+        except TypeError:
+            print("没有找到需要退款的订单")
+
+    # 企业后台-订单管理-标准订单管理-退款详情-申请仲裁
+    def test_d003_pay(self):
+        try:
+            conn = MySQL().connect_order1()
+            cur = conn.cursor()
+            cur.execute(
+                "select b.pay_id,a.sp_order_id,a.amount_Price, b.sp_order_stage_no, a.sp_product_code, a.sp_product_name, a.sp_product_spec_name from sp_order_info a, pay_stage_info b where a.order_state=1 and a.sp_partner_id=502 and b.pay_state=5 and a.sp_order_id=b.sp_order_id;")
+            ordering = cur.fetchone()[0:7]
+            pay_id = str(ordering[0])
+            sp_order_id = str(ordering[1])
+            amountPrice = ordering[2]
+            spOrderStageNo = ordering[3]
+            productCode = ordering[4]
+            productName = str(ordering[5])
+            productSpecName = ordering[6]
+            url = "http://cu.ejw.cn/platform/v1/order/" + sp_order_id + "/arbitrate/" + pay_id
+            print(url)
+            params = {"amountPrice": int(amountPrice), "spOrderStageNo": spOrderStageNo, "orderType": "1",
+                      "productCode": productCode,
+                      "productName": productName, "productSpecName": productSpecName, "spName": "竞网自动化勿删", "spId": 502,
+                      "cuName": "客户库合并合作伙伴验证-盛秀玲20171103", "orderCompId": 176, "orderEmpId": 2143, "cuEmpName": "蒋涛",
+                      "applyDesc": "自动化-服务商不同意退款，已购产品货物没有送达"}
+            result_act = requests.post(url, data=json.dumps(params), headers=headers)
+            # print(result_act.text)
+            result_exp = 200
+            self.assertEqual(result_exp, result_act.status_code, msg='发送仲裁失败')
+            print("申请仲裁成功")
+        except TypeError:
+            print("没有找到需要仲裁的订单")
 
 
 if __name__ == '__main__':

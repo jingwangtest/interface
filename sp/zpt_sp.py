@@ -3,11 +3,11 @@ import requests
 import random
 import json
 import unittest
-from comm.login import testlogin_001
+from comm.login import Zpt
 from comm.public_data import MySQL
 from comm.Log import Logger
 
-token = testlogin_001().test_splogin('token')
+token = Zpt().sp_login()
 
 # 设置营销锦囊名称
 jnName_01 = ''.join(random.sample(['8', '6', '3', '2', '5', '6'], 4))
@@ -278,9 +278,10 @@ class sp_dpgl_01(unittest.TestCase):
     # 工单管理-标准订单-接单
     def test_c011_order_verify(self):
         try:
-            conn = MySQL().connect_order1("order1")
+            conn = MySQL().connect_order1()
             cur = conn.cursor()
-            cur.execute("select sp_order_id,order_id,pay_price from sp_order_info where sp_partner_id='502' and order_state=0")
+            cur.execute(
+                "select sp_order_id,order_id,pay_price from sp_order_info where sp_partner_id='502' and order_state=0")
             ordering = cur.fetchone()[0:3]
             sp_order_id = ordering[0]
             order_id = ordering[1]
@@ -294,10 +295,56 @@ class sp_dpgl_01(unittest.TestCase):
             result_act = requests.post(url, data=json.dumps(params), headers=headers).status_code
             print(result_act)
             result_exp = 200
-            self.assertEqual(result_exp, str(result_act), msg='接单失败')
+            self.assertEqual(result_exp, result_act, msg='接单失败')
             print("接单成功")
         except TypeError:
             print("没有找到需要接单的订单")
+
+    # 工单管理-退款审核-同意退款
+    def test_c012_order_verify(self):
+        try:
+            conn = MySQL().connect_order1()
+            cur = conn.cursor()
+            cur.execute(
+                "select b.pay_id,b.refund_Amount, b.sp_order_id from sp_order_info a, pay_stage_info b where a.order_state=1 and a.sp_partner_id=502 and b.pay_state=4 and a.sp_order_id=b.sp_order_id;")
+            ordering = cur.fetchone()[0:3]
+            sp_order_id = str(ordering[2])
+            refund_Amount = str(ordering[1])
+            pay_id = str(ordering[0])
+            url = "http://sp.ejw.cn/order/v1/partner/502/order/" + sp_order_id + "/paystageinfo/" + pay_id
+            print(url)
+            params = {"nodeSuggest": "服务商同意退款", "payState": "6", "spEmpId": 2121, "spEmpName": "蒋涛",
+                      "spPartnerName": "竞网自动化勿删", "refundAmount": refund_Amount, "useCost": "0.00", "refundFee": "0.00"}
+            result_act = requests.put(url, data=json.dumps(params), headers=headers).status_code
+            print(result_act)
+            result_exp = 200
+            self.assertEqual(result_exp, result_act, msg='商家退款失败')
+            print("商家退款成功")
+        except TypeError:
+            print("没有找到需要退款的订单")
+
+    # 工单管理-退款审核-不同意退款
+    def test_c013_order_verify(self):
+        try:
+            conn = MySQL().connect_order1()
+            cur = conn.cursor()
+            cur.execute(
+                "select b.pay_id,b.refund_Amount, b.sp_order_id from sp_order_info a, pay_stage_info b where a.order_state=1 and a.sp_partner_id=502 and b.pay_state=4 and a.sp_order_id=b.sp_order_id;")
+            ordering = cur.fetchone()[0:3]
+            sp_order_id = str(ordering[2])
+            refund_Amount = str(ordering[1])
+            pay_id = str(ordering[0])
+            url = "http://sp.ejw.cn/order/v1/partner/502/order/" + sp_order_id + "/paystageinfo/" + pay_id
+            print(url)
+            params = {"nodeSuggest": "服务商不同意退款", "payState": "5", "spEmpId": 2121, "spEmpName": "蒋涛",
+                      "spPartnerName": "竞网自动化勿删", "refundAmount": refund_Amount, "useCost": "0.00", "refundFee": "0.00"}
+            result_act = requests.put(url, data=json.dumps(params), headers=headers).status_code
+            print(result_act)
+            result_exp = 200
+            self.assertEqual(result_exp, result_act, msg='商家不退款失败')
+            print("商家不同意退款")
+        except TypeError:
+            print("没有找到不退款的订单")
 
 if __name__ == '__main__':
     unittest.main()

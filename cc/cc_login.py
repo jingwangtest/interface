@@ -4,7 +4,7 @@ import json
 class cc001():
     # 验证登陆是否成功
     def cc_login(self, token):
-        params = {"mobilePhone": "17708490601", "password": "123456", "remember": True, "siteName": "main"}
+        params = {"mobilePhone": "18674800000", "password": "123456", "remember": True, "siteName": "main"}
         url = "http://auth.ejw.cn/api/login"
         headers = {
             'Content-Type': 'application/json;charset=UTF-8',

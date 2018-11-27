@@ -7,34 +7,29 @@ import unittest
 import json
 import random
 import os
+import datetime
 from comm.public_data import MySQL
-# from comm.login import testlogin_001
-from comm.Log import Logger
+from cc.cc_login import cc001
+
+# 请求头信息
+token = cc001().cc_login('token')
+headers = {
+    'Content-Type': 'application/json;charset=UTF-8',
+    'token': token
+}
+
+# 连接openapi数据库获取已授权的企业
+conn = MySQL().connect_open_api()
+cur1 = conn.cursor()
+# cur1.execute('select partner_id, partner_name from app_comp_auth where status = 1')
+cur1.execute('select t1.partner_id,t2.partner_name from app_comp_auth t1 left join os_partner t2 on t1.partner_id = t2.partner_id where t1.status = 1;')
+partner1 = cur1.fetchall()
+print(type(partner1), len(partner1), partner1)
+# 连接empos数据库获取已关联机构企业
+# conn = MySQL().connect_emp_os()
+# cur2 = conn.cursor()
+# cur2.execute('select partner_id from organ where deleted = 1')
+# partner2 = cur2.fetchall()
 #
-import configparser
-
-proDir = os.path.split(os.path.realpath(__file__))[0]
-# configPath = os.path.join(proDir, "config.ini")
-configPath = "F:\python_script\interface\config.ini"
-print(configPath)
-
-
-cf = configparser.ConfigParser(allow_no_value=True)
-cf.read(configPath, encoding='UTF-8')
-
-value = cf.get("DATABASE", 'database_api1')
-print(value)
-
-
-#
-# class empA01(unittest.TestCase):
-#     # 用户运营-企业客户管理-企业审核不通过-删除
-#     def test_b001_search(self):
-#         # print('select department_id,department_name from department where department_type = 0 and deleted = 1 and department_name = "新增部门张" ')
-#         conn = MySQL().connect_openapi()
-#         cur = conn.cursor()
-#         cur.execute("select * from api_info")
-#         count = cur.fetchone()
-#         print(count)
-# if __name__ == '__main__':
-#     ReadConfig1().get_db_ps()
+# s = tuple(set(partner1) - set(partner2))
+# s_test = str(s[0][0])
