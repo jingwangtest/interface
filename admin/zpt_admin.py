@@ -22,7 +22,7 @@ class admin_yygl(unittest.TestCase):
         global log
         log = Logger(logger="管理平台").getlog()
         name_01 = "湖南天劲制药有限责任公司"
-        conn_partner = MySQL().connect_os1()
+        conn_partner = MySQL().connect_os()
         cur1 = conn_partner.cursor()
         cur1.execute('select partner_id from partner where partner_name ="' + name_01 + '"')
         par_result = cur1.fetchone()
@@ -124,7 +124,7 @@ class admin_yygl(unittest.TestCase):
     # 用户运营-合作伙伴管理-新增供应商
     def test_a002_gys(self):
         name_01 = "湖南天劲制药有限责任公司"
-        conn_partner = MySQL().connect_os1()
+        conn_partner = MySQL().connect_os()
         cur1 = conn_partner.cursor()
         cur1.execute('select partner_id from partner where partner_name ="' + name_01 + '"')
         par_result = cur1.fetchone()
@@ -245,7 +245,7 @@ class admin_yygl(unittest.TestCase):
     def test_a004_search(self):
         global log
         log = Logger(logger="管理平台").getlog()
-        conn = MySQL().connect_os1()
+        conn = MySQL().connect_os()
         cur = conn.cursor()
         cur.execute("select partner_name from partner where partner_name='竞网测试同步'")
         parnername = str(cur.fetchone()[0])
@@ -264,7 +264,7 @@ class admin_yygl(unittest.TestCase):
 
     # 用户运营-企业客户管理-存在的用户查询
     def test_b001_search(self):
-        conn = MySQL().connect_portal1()
+        conn = MySQL().connect_portal()
         cur = conn.cursor()
         cur.execute("select partner_name from partner where `status`=0")
         parnername = str(cur.fetchone()[0])
@@ -297,7 +297,7 @@ class admin_yygl(unittest.TestCase):
     # 用户运营-企业客户管理-企业审核
     def test_b003_search(self):
         try:
-            conn = MySQL().connect_portal1()
+            conn = MySQL().connect_portal()
             cur1 = conn.cursor()
             cur1.execute(
                 'select partner_id,partner_name,area,address,phone from partner where status=0 order by gmt_create desc')
@@ -332,7 +332,7 @@ class admin_yygl(unittest.TestCase):
     def test_b004_search(self):
         global log
         log = Logger(logger="管理平台").getlog()
-        conn = MySQL().connect_platform1()
+        conn = MySQL().connect_platform()
         cur = conn.cursor()
         cur.execute(
             "select record_id from product_auth where `status`=3;")
@@ -359,7 +359,7 @@ class admin_yygl(unittest.TestCase):
 
     # 用户运营-企业客户管理-合作伙伴管理-企业审核通过-停用
     def test_b005_search(self):
-        conn = MySQL().connect_os1()
+        conn = MySQL().connect_os()
         cur = conn.cursor()
         cur.execute("select partner_id, partner_name from partner where `status`=1 and partner_type=0001")
         cur_data = cur.fetchone()
@@ -379,7 +379,7 @@ class admin_yygl(unittest.TestCase):
 
     # 用户运营-企业客户管理-合作伙伴管理-企业审核通过-启用
     def test_b006_search(self):
-        conn = MySQL().connect_os1()
+        conn = MySQL().connect_os()
         cur = conn.cursor()
         url_sql = "select partner_id, partner_name from partner where `status`=0 and partner_type=0001"
         cur.execute(url_sql)
@@ -401,7 +401,7 @@ class admin_yygl(unittest.TestCase):
     # 用户运营-企业客户管理-企业审核不通过-删除
     def test_b007_search(self):
         try:
-            conn = MySQL().connect_portal1()
+            conn = MySQL().connect_portal()
             cur1 = conn.cursor()
             cur1.execute(
                 'select partner_id from partner where `status`=2 ORDER BY gmt_create DESC;')
@@ -436,7 +436,7 @@ class admin_yygl(unittest.TestCase):
 
     # 产品管理-产品授权-待审核
     def test_d001_spsq_dsh(self):
-        conn = MySQL().connect_platform1()
+        conn = MySQL().connect_platform()
         cur = conn.cursor()
         cur.execute('select record_id,auth_id from product_auth where `status`= 3')
         cur_data = cur.fetchone()
@@ -462,7 +462,7 @@ class admin_yygl(unittest.TestCase):
 
     # 产品运营-产品审核-待审核
     def test_d002_spsq_dsh(self):
-        conn = MySQL().connect_platform1()
+        conn = MySQL().connect_platform()
         cur = conn.cursor()
         cur.execute('select verify_id,product_id from product_verify where `status` = 0')
         cur_data = cur.fetchone()[0:2]
@@ -602,7 +602,7 @@ class admin_yygl(unittest.TestCase):
     # 订单管理-仲裁管理-同意退款
     def test_h001_search(self):
         try:
-            conn = MySQL().connect_order1()
+            conn = MySQL().connect_platform()
             cur = conn.cursor()
             cur.execute(
                 "select examine_auth_id from refund_examine where examine_state=0 and order_comp_id=176")
