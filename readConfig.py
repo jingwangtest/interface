@@ -189,3 +189,9 @@ class ReadConfig:
     def read_cp_emp_name(self):
         value = self.cf.get("branch", "cpEmpName")
         return value
+
+    # ------------ admin用户信息 ----------
+    def read_admin_emp_id(self):
+        value = self.cf.get("branch", "adEmpId")
+        return value
+

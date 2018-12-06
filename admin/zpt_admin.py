@@ -7,221 +7,78 @@ from comm.login import Zpt
 from comm.public_data import MySQL
 from comm.Log import Logger
 from urllib.parse import quote
+import readConfig
+
 
 # 请求头信息
+localReadConfig = readConfig.ReadConfig()
 token = Zpt().test_admin_login()
 headers = {
     'Content-Type': 'application/json;charset=UTF-8',
     'token': token
 }
-
+cuComId = localReadConfig.read_cu_com_id()
+cuComName = localReadConfig.read_cu_com_name()
+cuEmpId = localReadConfig.read_cu_emp_id()
+cuEmpName = localReadConfig.read_cu_emp_name()
+adminEmpId = localReadConfig.read_admin_emp_id()
 
 class admin_yygl(unittest.TestCase):
-    # 用户运营-合作伙伴管理-新增服务商
+    # 用户运营-合作伙伴管理-新增合作伙伴
     def test_a001_fws(self):
-        global log
+        global log, log_exp, log_act
         log = Logger(logger="管理平台").getlog()
-        name_01 = "湖南天劲制药有限责任公司"
-        conn_partner = MySQL().connect_os()
-        cur1 = conn_partner.cursor()
-        cur1.execute('select partner_id from partner where partner_name ="' + name_01 + '"')
-        par_result = cur1.fetchone()
+        log_exp = Logger(logger="管理平台_预期结果").getlog()
+        log_act = Logger(logger="管理平台_实际结果").getlog()
+        conn = MySQL().connect_bi()
+        cur = conn.cursor()
+        sql = "select customer_name from bi_ici_customer_info limit 1000;"
+        cur.execute(sql)
+        name1 = cur.fetchall()
 
-        if par_result == None:
-            # 随机生成社会信用代码
-            uscCode_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 10))
-            uscCode_02 = '43062419'
-            uscCode = uscCode_01 + uscCode_02
-            paramas = {
-                "partner": {"partnerType": "0100", "partnerName": name_01, "area": "湖南/长沙", "address": "麓谷",
-                            "phone": "0731-86241871", "level": 5, "detail": "楼主"},
-                "partnerBusiness": {"uscCode": "91431300187402930W", "beginDate": "1993-04-13",
-                                    "validDate": "2999-12-31", "companyType": "集体所有制",
-                                    "registAddress": "娄底市娄星区洪家洲振兴路（涟钢检修厂旁）", "legalPerson": "谢国阳",
-                                    "registAuthority": "娄底市工商行政管理局", "approvalDate": "2016-03-28",
-                                    "registStatus": "存续（在营、开业、在册）", "registCapital": 303,
-                                    "scope": "环保设备设计、制造、安装，铆焊机械零配件加工，拉丝，机电设备安装、维修；工业废料回收开发利用，五金、化工产品（不含专控危险品）、金属材料销售；转运装卸、劳务输出（限涟钢厂内）；废油回收加工。软化丝、废钢切割，防腐工程，建筑材料，政策允许的矿产品、金属材料；炉料生产销售。",
-                                    "legalPersonIdcode": uscCode},
-                "partnerExt": {"standardIndustry": "552", "category": "44"}, "partnerQualifys": [{"qualifyType": 1,
-                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/b5f4b5ed46474606b7c603084fb140cd.jpg",
-                                                                                                  "qualifyName": "营业执照",
-                                                                                                  "qualifyBeginDate": "1993-04-13",
-                                                                                                  "qualifyValidDate": "2999-12-31"},
-                                                                                                 {"qualifyType": 2,
-                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/21d5c46b4c7543e59be30d435fa7c9c5.jpg,https://bj.bcebos.com/v1/hnjing-test/8288ec28360f4499a76879ddd3ae5d94.jpg",
-                                                                                                  "qualifyName": "法人身份证",
-                                                                                                  "qualifyBeginDate": "2018-09-30",
-                                                                                                  "qualifyValidDate": "2018-09-30"}],
-                "employees": {"empName": "测试", "phone": "15814405932", "email": "15814405932@139.com"}}
-            url = 'http://admin.ejw.cn/platform/v1/partnerall?curEmpId=1699'
-            # 发送服务商接口请求
-            qykh_test_01 = requests.post(url, data=json.dumps(paramas), headers=headers)
-            print(qykh_test_01.text)
-            result_act = qykh_test_01.status_code
-            result_exp = 200
-            # 判断当前返回码及字段值
-            self.assertEqual(result_exp, result_act, msg='审核原因：已存在相同用户企业或其它参数错误')
-            log.info("企业客户管理-合作伙伴管理-供应商新增成功")
+        conn1 = MySQL().connect_os()
+        cur1 = conn1.cursor()
+        sql1 = "select partner_name from partner;"
+        cur1.execute(sql1)
+        name2 = cur.fetchall()
+        s = tuple(set(name1) - set(name2))
+        partner_name = str(s[0][0])
 
-        else:
-            # 获取partner_id的值
-            partner_id = par_result[0]
-            name_id = str(partner_id)
-            print(name_id)
-            # 获取emp_id的值
-            cur1.execute('select emp_id from employee where partner_id = "' + name_id + '"')
-            results_data_01 = cur1.fetchone()
-            # print(results_data_01)
-            employee_id = results_data_01[0]
-            emp_id = str(employee_id)
-            print(emp_id)
-            # 删除除长沙艾客美食文化传播有限公司相关联的数据用户信息
-            cur1.execute('delete from employee_link_role where emp_id = "' + emp_id + '"')
-            cur1.execute('delete from employee where partner_id = "' + name_id + '"')
-            cur1.execute('delete from partner_business where partner_id = "' + name_id + '"')
-            cur1.execute('delete from partner_ext where partner_id= "' + name_id + '"')
-            cur1.execute('delete from partner_qualify where partner_id= "' + name_id + '"')
-            cur1.execute('delete from partner where partner_name="' + name_01 + '"')
-            conn_partner.commit()
-            cur1.close()
-            conn_partner.close()
-            # 随机生成社会信用代码
-            uscCode_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 10))
-            uscCode_02 = '43062419'
-            uscCode = uscCode_01 + uscCode_02
-            paramas = {
-                "partner": {"partnerType": "0111", "partnerName": name_01, "area": "湖南/长沙", "address": "麓谷",
-                            "phone": "0731-86241871", "level": 5, "detail": "楼主"},
-                "partnerBusiness": {"uscCode": "91431300187402930W", "beginDate": "1993-04-13",
-                                    "validDate": "2999-12-31", "companyType": "集体所有制",
-                                    "registAddress": "娄底市娄星区洪家洲振兴路（涟钢检修厂旁）", "legalPerson": "谢国阳",
-                                    "registAuthority": "娄底市工商行政管理局", "approvalDate": "2016-03-28",
-                                    "registStatus": "存续（在营、开业、在册）", "registCapital": 303,
-                                    "scope": "环保设备设计、制造、安装，铆焊机械零配件加工，拉丝，机电设备安装、维修；工业废料回收开发利用，五金、化工产品（不含专控危险品）、金属材料销售；转运装卸、劳务输出（限涟钢厂内）；废油回收加工。软化丝、废钢切割，防腐工程，建筑材料，政策允许的矿产品、金属材料；炉料生产销售。",
-                                    "legalPersonIdcode": uscCode},
-                "partnerExt": {"standardIndustry": "552", "category": "44"}, "partnerQualifys": [{"qualifyType": 1,
-                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/b5f4b5ed46474606b7c603084fb140cd.jpg",
-                                                                                                  "qualifyName": "营业执照",
-                                                                                                  "qualifyBeginDate": "1993-04-13",
-                                                                                                  "qualifyValidDate": "2999-12-31"},
-                                                                                                 {"qualifyType": 2,
-                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/21d5c46b4c7543e59be30d435fa7c9c5.jpg,https://bj.bcebos.com/v1/hnjing-test/8288ec28360f4499a76879ddd3ae5d94.jpg",
-                                                                                                  "qualifyName": "法人身份证",
-                                                                                                  "qualifyBeginDate": "2018-09-30",
-                                                                                                  "qualifyValidDate": "2018-09-30"}],
-                "employees": {"empName": "测试", "phone": "15814405932", "email": "15814405932@139.com"}}
-            url = 'http://admin.ejw.cn/platform/v1/partnerall?curEmpId=1699'
-            # 发送服务商接口请求
-            qykh_test_01 = requests.post(url, data=json.dumps(paramas), headers=headers)
-            print(qykh_test_01.text)
-            result_act = qykh_test_01.status_code
-            result_exp = 200
-            # 判断当前返回码及字段值
-            # 判断当前返回码及字段值
-            self.assertEqual(result_exp, result_act, msg='审核原因：已存在相同用户企业或其它参数错误')
-            log.info("企业客户管理-合作伙伴管理-供应商新增成功")
+        # 随机生成社会信用代码
+        uscCode_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 10))
+        uscCode_02 = '43062419'
+        uscCode = uscCode_01 + uscCode_02
+        paramas = {
+            "partner": {"partnerType": "0110", "partnerName": partner_name, "area": "湖南/长沙", "address": "麓谷",
+                        "phone": "0731-86241871", "level": 5, "detail": "楼主"},
+            "partnerBusiness": {"uscCode": "91431300187402930W", "beginDate": "1993-04-13",
+                                "validDate": "2999-12-31", "companyType": "集体所有制",
+                                "registAddress": "娄底市娄星区洪家洲振兴路（涟钢检修厂旁）", "legalPerson": "谢国阳",
+                                "registAuthority": "娄底市工商行政管理局", "approvalDate": "2016-03-28",
+                                "registStatus": "存续（在营、开业、在册）", "registCapital": 303,
+                                "scope": "环保设备设计、制造、安装，铆焊机械零配件加工，拉丝，机电设备安装、维修；工业废料回收开发利用，五金、化工产品（不含专控危险品）、金属材料销售；转运装卸、劳务输出（限涟钢厂内）；废油回收加工。软化丝、废钢切割，防腐工程，建筑材料，政策允许的矿产品、金属材料；炉料生产销售。",
+                                "legalPersonIdcode": uscCode},
+            "partnerExt": {"standardIndustry": "552", "category": "44"}, "partnerQualifys": [{"qualifyType": 1,
+                                                                                              "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/b5f4b5ed46474606b7c603084fb140cd.jpg",
+                                                                                              "qualifyName": "营业执照",
+                                                                                              "qualifyBeginDate": "1993-04-13",
+                                                                                              "qualifyValidDate": "2999-12-31"},
+                                                                                             {"qualifyType": 2,
+                                                                                              "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/21d5c46b4c7543e59be30d435fa7c9c5.jpg,https://bj.bcebos.com/v1/hnjing-test/8288ec28360f4499a76879ddd3ae5d94.jpg",
+                                                                                              "qualifyName": "法人身份证",
+                                                                                              "qualifyBeginDate": "2018-09-30",
+                                                                                              "qualifyValidDate": "2018-09-30"}],
+            "employees": {"empName": "测试", "phone": "15814405932", "email": "15814405932@139.com"}}
+        url = 'http://admin.ejw.cn/platform/v1/partnerall?curEmpId='+adminEmpId
+        # 发送服务商接口请求
+        qykh_test_01 = requests.post(url, data=json.dumps(paramas), headers=headers)
+        print(qykh_test_01.text)
+        result_act = qykh_test_01.status_code
+        result_exp = 200
+        # 判断当前返回码及字段值
+        self.assertEqual(result_exp, result_act, msg='审核原因：已存在相同用户企业或其它参数错误')
+        log.info("企业客户管理-合作伙伴管理-服务商新增成功")
 
-    # 用户运营-合作伙伴管理-新增供应商
-    def test_a002_gys(self):
-        name_01 = "湖南天劲制药有限责任公司"
-        conn_partner = MySQL().connect_os()
-        cur1 = conn_partner.cursor()
-        cur1.execute('select partner_id from partner where partner_name ="' + name_01 + '"')
-        par_result = cur1.fetchone()
-
-        if par_result == None:
-            # 随机生成社会信用代码
-            uscCode_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 10))
-            uscCode_02 = '43062419'
-            uscCode = uscCode_01 + uscCode_02
-            paramas = {
-                "partner": {"partnerType": "0010", "partnerName": name_01, "area": "湖南/长沙", "address": "麓谷",
-                            "phone": "0731-86241871", "level": 5, "detail": "楼主"},
-                "partnerBusiness": {"uscCode": "91431300187402930W", "beginDate": "1993-04-13",
-                                    "validDate": "2999-12-31", "companyType": "集体所有制",
-                                    "registAddress": "娄底市娄星区洪家洲振兴路（涟钢检修厂旁）", "legalPerson": "谢国阳",
-                                    "registAuthority": "娄底市工商行政管理局", "approvalDate": "2016-03-28",
-                                    "registStatus": "存续（在营、开业、在册）", "registCapital": 303,
-                                    "scope": "环保设备设计、制造、安装，铆焊机械零配件加工，拉丝，机电设备安装、维修；工业废料回收开发利用，五金、化工产品（不含专控危险品）、金属材料销售；转运装卸、劳务输出（限涟钢厂内）；废油回收加工。软化丝、废钢切割，防腐工程，建筑材料，政策允许的矿产品、金属材料；炉料生产销售。",
-                                    "legalPersonIdcode": uscCode},
-                "partnerExt": {"standardIndustry": "552", "category": "44"}, "partnerQualifys": [{"qualifyType": 1,
-                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/b5f4b5ed46474606b7c603084fb140cd.jpg",
-                                                                                                  "qualifyName": "营业执照",
-                                                                                                  "qualifyBeginDate": "1993-04-13",
-                                                                                                  "qualifyValidDate": "2999-12-31"},
-                                                                                                 {"qualifyType": 2,
-                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/21d5c46b4c7543e59be30d435fa7c9c5.jpg,https://bj.bcebos.com/v1/hnjing-test/8288ec28360f4499a76879ddd3ae5d94.jpg",
-                                                                                                  "qualifyName": "法人身份证",
-                                                                                                  "qualifyBeginDate": "2018-09-30",
-                                                                                                  "qualifyValidDate": "2018-09-30"}],
-                "employees": {"empName": "测试", "phone": "15814405932", "email": "15814405932@139.com"}}
-            url = 'http://admin.ejw.cn/platform/v1/partnerall?curEmpId=1699'
-            # 发送服务商接口请求
-            qykh_test_01 = requests.post(url, data=json.dumps(paramas), headers=headers)
-            print(qykh_test_01.text)
-            result_act = qykh_test_01.status_code
-            result_exp = 200
-            # 判断当前返回码及字段值
-            self.assertEqual(result_exp, result_act, msg='审核原因：已存在相同用户企业或其它参数错误')
-            log.info("企业客户管理-合作伙伴管理-供应商新增成功")
-
-        else:
-            # 获取partner_id的值
-            partner_id = par_result[0]
-            name_id = str(partner_id)
-            print(name_id)
-            # 获取emp_id的值
-            cur1.execute('select emp_id from employee where partner_id = "' + name_id + '"')
-            results_data_01 = cur1.fetchone()
-            # print(results_data_01)
-            employee_id = results_data_01[0]
-            emp_id = str(employee_id)
-            print(emp_id)
-            # 删除除长沙艾客美食文化传播有限公司相关联的数据用户信息
-            cur1.execute('delete from employee_link_role where emp_id = "' + emp_id + '"')
-            cur1.execute('delete from employee where partner_id = "' + name_id + '"')
-            cur1.execute('delete from partner_business where partner_id = "' + name_id + '"')
-            cur1.execute('delete from partner_ext where partner_id= "' + name_id + '"')
-            cur1.execute('delete from partner_qualify where partner_id= "' + name_id + '"')
-            cur1.execute('delete from partner where partner_name="' + name_01 + '"')
-            conn_partner.commit()
-            cur1.close()
-            conn_partner.close()
-            # 随机生成社会信用代码
-            uscCode_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 10))
-            uscCode_02 = '43062419'
-            uscCode = uscCode_01 + uscCode_02
-            paramas = {
-                "partner": {"partnerType": "0111", "partnerName": name_01, "area": "湖南/长沙", "address": "麓谷",
-                            "phone": "0731-86241871", "level": 5, "detail": "楼主"},
-                "partnerBusiness": {"uscCode": "91431300187402930W", "beginDate": "1993-04-13",
-                                    "validDate": "2999-12-31", "companyType": "集体所有制",
-                                    "registAddress": "娄底市娄星区洪家洲振兴路（涟钢检修厂旁）", "legalPerson": "谢国阳",
-                                    "registAuthority": "娄底市工商行政管理局", "approvalDate": "2016-03-28",
-                                    "registStatus": "存续（在营、开业、在册）", "registCapital": 303,
-                                    "scope": "环保设备设计、制造、安装，铆焊机械零配件加工，拉丝，机电设备安装、维修；工业废料回收开发利用，五金、化工产品（不含专控危险品）、金属材料销售；转运装卸、劳务输出（限涟钢厂内）；废油回收加工。软化丝、废钢切割，防腐工程，建筑材料，政策允许的矿产品、金属材料；炉料生产销售。",
-                                    "legalPersonIdcode": uscCode},
-                "partnerExt": {"standardIndustry": "552", "category": "44"}, "partnerQualifys": [{"qualifyType": 1,
-                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/b5f4b5ed46474606b7c603084fb140cd.jpg",
-                                                                                                  "qualifyName": "营业执照",
-                                                                                                  "qualifyBeginDate": "1993-04-13",
-                                                                                                  "qualifyValidDate": "2999-12-31"},
-                                                                                                 {"qualifyType": 2,
-                                                                                                  "qualifyImage": "https://bj.bcebos.com/v1/hnjing-test/21d5c46b4c7543e59be30d435fa7c9c5.jpg,https://bj.bcebos.com/v1/hnjing-test/8288ec28360f4499a76879ddd3ae5d94.jpg",
-                                                                                                  "qualifyName": "法人身份证",
-                                                                                                  "qualifyBeginDate": "2018-09-30",
-                                                                                                  "qualifyValidDate": "2018-09-30"}],
-                "employees": {"empName": "测试", "phone": "15814405932", "email": "15814405932@139.com"}}
-            url = 'http://admin.ejw.cn/platform/v1/partnerall?curEmpId=1699'
-            # 发送服务商接口请求
-            qykh_test_01 = requests.post(url, data=json.dumps(paramas), headers=headers)
-            print(qykh_test_01.text)
-            result_act = qykh_test_01.status_code
-            result_exp = 200
-            # 判断当前返回码及字段值
-            # 判断当前返回码及字段值
-            self.assertEqual(result_exp, result_act, msg='审核原因：已存在相同用户企业或其它参数错误')
-            log.info("企业客户管理-合作伙伴管理-供应商新增成功")
 
     # 用户运营-合作伙伴管理-不存在的查询
     def test_a003_search(self):
@@ -243,39 +100,38 @@ class admin_yygl(unittest.TestCase):
 
     # 用户运营-合作伙伴管理-存在的查询
     def test_a004_search(self):
-        global log
-        log = Logger(logger="管理平台").getlog()
         conn = MySQL().connect_os()
         cur = conn.cursor()
-        cur.execute("select partner_name from partner where partner_name='竞网测试同步'")
-        parnername = str(cur.fetchone()[0])
+        cur.execute("select partner_name from partner where partner_type = 0110;")
+        sql_result = cur.fetchone()[0:1]
+        parnername = sql_result[0]
         url_01 = 'http://admin.ejw.cn/os/v1/partners?pageNo=1&pageSize=10&partnerType=0010%2C0011%2C0100%2C0101%2C0111%2C0110&partnerName='
         url = url_01 + parnername
+        print(url)
         # 发送服务商接口请求
         qykh_test_01 = requests.get(url, headers=headers)
         qykh_test = qykh_test_01.text
-        # 返回状态码信息
-        totalCount = qykh_test.split("startRow", 2)[1].split(",", 2)[1].split(":", 2)[1]
-        # 判断当前返回码及字段值
-        result_act = int(totalCount)
-        result_exp = 1
-        self.assertEqual(result_exp, result_act, "查询的日志结果不一致")
+        print(qykh_test)
+        self.assertIn(parnername, qykh_test, "查询的日志结果不一致")
         log.info("合作伙伴管理-存在的信息查询成功")
 
     # 用户运营-企业客户管理-存在的用户查询
     def test_b001_search(self):
-        conn = MySQL().connect_portal()
-        cur = conn.cursor()
-        cur.execute("select partner_name from partner where `status`=0")
-        parnername = str(cur.fetchone()[0])
-        url_01 = 'http://admin.ejw.cn/portal/v1/partners?sort=%7B%22gmtCreate%22%3A%22desc%22%7D&status=0&pageNo=1&pageSize=10&partnerName='
-        url = url_01 + parnername
-        # 发送服务商接口请求
-        qykh_test_01 = requests.get(url, headers=headers)
-        qykh_test = qykh_test_01.text
-        # 判断当前返回码及字段值
-        self.assertIn(parnername, qykh_test, msg="没有查询到此用户信息")
-        log.info("企业客户管理-存在的用户查询成功")
+        try:
+            conn = MySQL().connect_portal()
+            cur = conn.cursor()
+            cur.execute("select partner_name from partner where `status`=0")
+            parnername = str(cur.fetchone()[0])
+            url_01 = 'http://admin.ejw.cn/portal/v1/partners?sort=%7B%22gmtCreate%22%3A%22desc%22%7D&status=0&pageNo=1&pageSize=10&partnerName='
+            url = url_01 + parnername
+            # 发送服务商接口请求
+            qykh_test_01 = requests.get(url, headers=headers)
+            qykh_test = qykh_test_01.text
+            # 判断当前返回码及字段值
+            self.assertIn(parnername, qykh_test, msg="没有查询到此用户信息")
+            log.info("企业客户管理-存在的用户查询成功")
+        except TypeError:
+            log.info("企业客户管理没有用户信息")
 
     # 用户运营-企业客户管理-不存在的用户查询
     def test_b002_search(self):
@@ -306,7 +162,7 @@ class admin_yygl(unittest.TestCase):
                                                              par_result[4]
             print(partner_id, partner_name, area, address, phone)
             url_01 = "http://admin.ejw.cn/platform/v1/partner/"
-            url = url_01 + str(partner_id) + '/audit?curEmpId=1720'
+            url = url_01 + str(partner_id) + '/audit?curEmpId='+adminEmpId
             print(url)
             params = {"partner": {"partnerName": partner_name, "area": area, "address": address, "phone": phone,
                                   "detail": "", "partnerType": "0001", "organizeType": 1},
@@ -325,13 +181,12 @@ class admin_yygl(unittest.TestCase):
             result_act = requests.put(url, data=json.dumps(params), headers=headers).status_code
             result_exp = 200
             self.assertEqual(result_exp, result_act, msg="返回响应码不一致，请检查是否有错")
+            log.info("用户运营-企业客户管理-企业审核通过")
         except TypeError:
-            print("数据库查询信息为空")
+            log.info("数据库查询信息为空")
 
     # 产品运营-产品授权审核-待审核
     def test_b004_search(self):
-        global log
-        log = Logger(logger="管理平台").getlog()
         conn = MySQL().connect_platform()
         cur = conn.cursor()
         cur.execute(
@@ -341,12 +196,12 @@ class admin_yygl(unittest.TestCase):
         if cur_data == None:
             result_exp = None
             self.assertEqual(result_exp, cur_data)
-            log.info("企业客户管理-合作伙伴管理-没有需要审核的产品信息")
+            log.info("产品运营-产品授权审核-待审核-没有需要审核的产品信息")
         else:
             record_id = str(cur_data[0])
             paramas = {"status": 5}
             url_01 = 'http://admin.ejw.cn/platform/v1/productauth/'
-            url = url_01 + record_id + '/platformverify?curEmpId=1699'
+            url = url_01 + record_id + '/platformverify?curEmpId='+adminEmpId
             # print(url)
             # 发送服务商接口请求
             qykh_test_01 = requests.put(url, data=json.dumps(paramas), headers=headers)
@@ -355,7 +210,7 @@ class admin_yygl(unittest.TestCase):
             result_exp = 200
             # 判断当前返回码及字段值
             self.assertEqual(result_exp, result_act, msg='审核失败：没有存在的企业或其它参数错误')
-            log.info("企业客户管理-合作伙伴管理-产品授权审核成功")
+            log.info("产品运营-产品授权审核-待审核-产品授权审核成功")
 
     # 用户运营-企业客户管理-合作伙伴管理-企业审核通过-停用
     def test_b005_search(self):
@@ -375,7 +230,7 @@ class admin_yygl(unittest.TestCase):
         result_act = shtg.status_code
         result_exp = 200
         self.assertEqual(result_exp, result_act)
-        # log.info("企业客户管理-合作伙伴管理-企业审核通过-停用成功")
+        log.info("企业客户管理-合作伙伴管理-企业审核通过-停用成功")
 
     # 用户运营-企业客户管理-合作伙伴管理-企业审核通过-启用
     def test_b006_search(self):
@@ -396,7 +251,7 @@ class admin_yygl(unittest.TestCase):
         result_act = shtg.status_code
         result_exp = 200
         self.assertEqual(result_exp, result_act)
-        # log.info("企业" + partner_name + "停用成功")
+        log.info("企业" + partner_name + "停用成功")
 
     # 用户运营-企业客户管理-企业审核不通过-删除
     def test_b007_search(self):
@@ -407,32 +262,36 @@ class admin_yygl(unittest.TestCase):
                 'select partner_id from partner where `status`=2 ORDER BY gmt_create DESC;')
             par_result = cur1.fetchone()
             partner_id = par_result[0]
-            print(partner_id)
             url_01 = "http://admin.ejw.cn/portal/v1/partnerall/"
             url = url_01 + str(partner_id)
-            print(url)
             result_act = requests.delete(url, headers=headers).status_code
             result_exp = 200
             self.assertEqual(result_exp, result_act, msg="返回响应码不一致，请检查是否有错")
+            log.info("用户运营-企业客户管理-企业审核不通过-删除通过")
         except TypeError:
-            print("数据库查询信息为空,没有需要删除的企业客户")
+            log.info("数据库查询信息为空,没有需要删除的企业客户")
 
-    # 用户运营-企业客户管理-资质模板管理-新增
+    # 系统管理-平台配置-资质模块设置-新增
     def test_c001_search(self):
+        conn = MySQL().connect_platform()
+        cur = conn.cursor()
+        cur.execute('select type_id from qualify_type ORDER BY type_id DESC;')
+        sql_result = cur.fetchone()[0:1]
+        typeId = sql_result[0]
         # 随机生成社会信用代码
         tempName_01 = ''.join(random.sample(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 4))
         tempName_02 = '自资名称'
         tempName = tempName_01 + tempName_02
         url = 'http://admin.ejw.cn/platform/v1/qualifytemplate'
-        paramas = {"typeId": 96, "tempName": tempName,
+        paramas = {"typeId": typeId, "tempName": tempName,
                    "tempImage": "http://hnjing-test.bj.bcebos.com/v1/hnjing-test/34b04a41698c4dc28627a19d44801011.jpg"}
         # 发送服务商接口请求
         zzmb = requests.post(url, data=json.dumps(paramas), headers=headers)
         result_exp = 200
         result_act = zzmb.status_code
         # 判断当前返回码及字段值
-        self.assertEqual(result_exp, result_act)
-        log.info("新增资质模板成功")
+        self.assertEqual(result_exp, result_act, msg="新增模板失败，请检查失败原因")
+        log.info("系统管理-平台配置-资质模块设置-新增资质模块成功")
 
     # 产品管理-产品授权-待审核
     def test_d001_spsq_dsh(self):
@@ -460,7 +319,7 @@ class admin_yygl(unittest.TestCase):
             self.assertEqual(result_exp, result_act, msg="产品授权-审核不通过")
             log.info("产品授权-审核通过")
 
-    # 产品运营-产品审核-待审核
+    # 产品运营-上下架审核-待审核
     def test_d002_spsq_dsh(self):
         conn = MySQL().connect_platform()
         cur = conn.cursor()
@@ -470,13 +329,15 @@ class admin_yygl(unittest.TestCase):
         product_id = cur_data[1]
         print(verify_id, product_id)
         url_01 = 'http://admin.ejw.cn/platform/v1/productverify/'
-        url = url_01 + verify_id + '?curEmpId=1720'
+        url = url_01 + verify_id + '?curEmpId='+adminEmpId
         paramas = {"status": 1}
         result = requests.put(url, data=json.dumps(paramas), headers=headers)
         result_exp = 200
         result_act = result.status_code
-        self.assertEqual(result_exp, result_act)
-        print("产品审核通过")
+        self.assertEqual(result_exp, result_act, msg="验证结果不一致")
+        log.info("运营平台产品上下架审核能过，信息如下")
+        log_exp.info(result_exp)
+        log_act.info(result_act)
 
     # 消息管理-手动模板-新增
     def test_e001_zlxgl(self):
@@ -597,29 +458,30 @@ class admin_yygl(unittest.TestCase):
         result_act = requests.get(url, headers=headers)
         result = result_act.text
         self.assertNotIn(srvOrderId, result, msg="成功查询到该订单信息")
-        print("续期订单管理-不存在的订单编号查询成功。不存在该订单，订单编号为：" + srvOrderId)
+        log.info("续期订单管理-不存在的订单编号查询成功。不存在该订单，订单编号为：" + srvOrderId)
 
     # 订单管理-仲裁管理-同意退款
     def test_h001_search(self):
         try:
             conn = MySQL().connect_platform()
             cur = conn.cursor()
-            cur.execute(
-                "select examine_auth_id from refund_examine where examine_state=0 and order_comp_id=176")
+            sql = "select examine_auth_id from refund_examine where examine_state=0 and order_comp_id="+cuComId
+            cur.execute(sql)
             ordering = cur.fetchone()[0:1]
             examine_auth_id = str(ordering[0])
-            url = "http://admin.ejw.cn/platform/v1/arbitrate/" + examine_auth_id + "?curEmpId=1720"
-            print(url)
-            params = {"examineState": 1, "examineSuggest": "", "refundAmount": 1, "examineEmpId": 1720,
-                      "examineEmpName": "蒋涛", "spOrderStageNo": 1, "orderEmpId": 176, "orderCompId": 176, "useCost": 0,
+            print(examine_auth_id)
+            url = "http://admin.ejw.cn/platform/v1/arbitrate/" + examine_auth_id + "?curEmpId="+adminEmpId
+            params = {"examineState": 1, "examineSuggest": "", "refundAmount": 1, "examineEmpId": int(adminEmpId),
+                      "examineEmpName": cuEmpName, "spOrderStageNo": 1, "orderEmpId": int(cuEmpId), "orderCompId": int(cuComId), "useCost": 0,
                       "refundFee": 0}
+            print(params)
             result_act = requests.put(url, data=json.dumps(params), headers=headers)
             # print(result_act.text)
             result_exp = 200
             self.assertEqual(result_exp, result_act.status_code, msg='发送仲裁失败')
-            print("申请仲裁成功")
+            log.info("申请仲裁成功")
         except TypeError:
-            print("没有找到需要仲裁的订单")
+            log.info("没有找到需要仲裁的订单")
 
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@
 import requests
 import random
 import json
+import time
 import unittest
 from comm.login import Zpt
 from comm.public_data import MySQL
@@ -14,7 +15,11 @@ localReadConfig = readConfig.ReadConfig()
 # 指定用户createUser、sp_id、spEmpId
 createUser = int(localReadConfig.read_sp_user())
 spId = localReadConfig.read_sp_com_id()
-spEmpId = int(localReadConfig.read_sp_emp_id())
+spEmpId = localReadConfig.read_sp_emp_id()
+cuComId = localReadConfig.read_cu_com_id()
+cuComName = localReadConfig.read_cu_com_name()
+cuEmpId = localReadConfig.read_cu_emp_id()
+cuEmpName = localReadConfig.read_cu_emp_name()
 
 # 设置营销锦囊名称
 jnName_01 = ''.join(random.sample(['8', '6', '3', '2', '5', '6'], 4))
@@ -31,6 +36,10 @@ headers = {
 class sp_dpgl_01(unittest.TestCase):
     # 店铺管理-案例管理-新增角色
     def test_a001_role_add(self):
+        global log, log_exp, log_act
+        log_exp = Logger(logger="服务商平台_预期结果").getlog()
+        log_act = Logger(logger="服务商平台_实际结果").getlog()
+        log = Logger(logger="服务商平台").getlog()
         # 设置案例名称
         caseName_01 = ''.join(random.sample(['8', '6', '3', '2', '5', '6'], 4))
         caseName_02 = '案例生成'
@@ -42,10 +51,6 @@ class sp_dpgl_01(unittest.TestCase):
                   "spId": int(spId)}
         result_act = requests.post(url, data=json.dumps(params), headers=headers).text
         self.assertIn(caseName, result_act, msg="新增案例失败")
-        global log, log_exp, log_act
-        log_exp = Logger(logger="服务商平台_预期结果").getlog()
-        log_act = Logger(logger="服务商平台_实际结果").getlog()
-        log = Logger(logger="服务商平台").getlog()
         log_exp.info(caseName)
         log_act.info(result_act)
         log.info(caseName + "新增成功")
@@ -70,7 +75,7 @@ class sp_dpgl_01(unittest.TestCase):
         conn = MySQL().connect_mall()
         cur = conn.cursor()
         # 查询出当前要删除案例的id信息
-        sql = "select case_name from class_case_info t where t.sp_id ="+spId
+        sql = "select case_name from class_case_info t where t.sp_id =" + spId
         cur.execute(sql)
         case_name = str(cur.fetchall()[0][0])
         url_01 = 'http://sp.ejw.cn/mall/v1/classcaseinfos?spId=' + spId + '&caseState=&pageSize=10&pageNo=1&caseName='
@@ -131,7 +136,7 @@ class sp_dpgl_01(unittest.TestCase):
             # 查询出当前要删除案例的id信息
             cur.execute('select policy_Name from marketing_policy t where t.sp_id  =  "' + spId + '"')
             result_exp = str(cur.fetchall()[0][0])
-            url_01 = "http://sp.ejw.cn/mall/v1/marketingpolicys?spId="+spId+"&policyState=&pageNo=1&pageSize=10&policyName="
+            url_01 = "http://sp.ejw.cn/mall/v1/marketingpolicys?spId=" + spId + "&policyState=&pageNo=1&pageSize=10&policyName="
             url = url_01 + result_exp
             result_act = requests.get(url, headers=headers).text
             self.assertIn(result_exp, result_act, msg="案例名称查询失败")
@@ -144,7 +149,7 @@ class sp_dpgl_01(unittest.TestCase):
     # 店铺管理-营销锦囊-不存在的用户名查询
     def test_b004_jn_search(self):
         result_exp = "test000000011111"
-        url_01 = "http://sp.ejw.cn/mall/v1/marketingpolicys?spId="+spId+"&policyState=&pageNo=1&pageSize=10&policyName="
+        url_01 = "http://sp.ejw.cn/mall/v1/marketingpolicys?spId=" + spId + "&policyState=&pageNo=1&pageSize=10&policyName="
         url = url_01 + result_exp
         result_act = requests.get(url, headers=headers).text
         self.assertNotIn(result_exp, result_act, msg="不存在的用户查询失败")
@@ -408,28 +413,31 @@ class sp_dpgl_01(unittest.TestCase):
 
     # 工单管理-标准订单-接单
     def test_c011_order_pay(self):
+        global log, log_exp, log_act
+        log_exp = Logger(logger="服务商平台_预期结果").getlog()
+        log_act = Logger(logger="服务商平台_实际结果").getlog()
+        log = Logger(logger="服务商平台").getlog()
         try:
             conn = MySQL().connect_order()
             cur = conn.cursor()
             sql = "select sp_order_id,order_id,pay_price from sp_order_info where sp_partner_id=" + spId + " and order_state=0"
+            print(sql)
             cur.execute(sql)
             ordering = cur.fetchone()[0:3]
             sp_order_id = ordering[0]
             order_id = ordering[1]
             pay_price = ordering[2]
-            url = "http://sp.ejw.cn/order/v1/sp/502/order/" + sp_order_id + "/paystageinfo"
+            url = "http://sp.ejw.cn/order/v1/sp/" + spId + "/order/" + sp_order_id + "/paystageinfo"
             print(url)
-            params = {"spEmpId": 2121, "spEmpName": "蒋涛", "orderId": order_id,
+            params = {"spEmpId": int(spEmpId), "spEmpName": "蒋涛", "orderId": order_id,
                       "spCusContractUrl": "https://bj.bcebos.com/v1/hnjing-test/d45fdb0150674e5baa969192921ad626.rar",
                       "stages": [{"spOrderStageNo": 1, "payDesc": "aaaa", "payAmount": int(pay_price)}]}
-            print(params)
             result_act = requests.post(url, data=json.dumps(params), headers=headers).status_code
-            print(result_act)
             result_exp = 200
             self.assertEqual(result_exp, result_act, msg='接单失败')
-            print("接单成功")
+            log.info("接单成功")
         except TypeError:
-            print("没有找到需要接单的订单")
+            log.info("没有找到需要接单的订单")
 
     # 工单管理-退款审核-同意退款
     def test_c012_order_pay(self):
@@ -442,7 +450,7 @@ class sp_dpgl_01(unittest.TestCase):
             sp_order_id = str(ordering[2])
             refund_Amount = str(ordering[1])
             pay_id = str(ordering[0])
-            url = "http://sp.ejw.cn/order/v1/partner/"+spId+"/order/" + sp_order_id + "/paystageinfo/" + pay_id
+            url = "http://sp.ejw.cn/order/v1/partner/" + spId + "/order/" + sp_order_id + "/paystageinfo/" + pay_id
             print(url)
             params = {"nodeSuggest": "服务商同意退款", "payState": "6", "spEmpId": spEmpId, "spEmpName": "蒋涛",
                       "spPartnerName": "竞网自动化勿删", "refundAmount": refund_Amount, "useCost": "0.00", "refundFee": "0.00"}
@@ -459,23 +467,21 @@ class sp_dpgl_01(unittest.TestCase):
         try:
             conn = MySQL().connect_order()
             cur = conn.cursor()
-            sql = "select b.pay_id,b.refund_Amount, b.sp_order_id from sp_order_info a, pay_stage_info b where a.order_state=1 and a.sp_partner_id="+spId+" and b.pay_state=4 and a.sp_order_id=b.sp_order_id;"
+            sql = "select b.pay_id,b.refund_Amount, b.sp_order_id from sp_order_info a, pay_stage_info b where a.order_state=1 and a.sp_partner_id=" + spId + " and b.pay_state=4 and a.sp_order_id=b.sp_order_id;"
             cur.execute(sql)
             ordering = cur.fetchone()[0:3]
             sp_order_id = str(ordering[2])
             refund_Amount = str(ordering[1])
             pay_id = str(ordering[0])
-            url = "http://sp.ejw.cn/order/v1/partner/"+spId+"/order/" + sp_order_id + "/paystageinfo/" + pay_id
-            print(url)
+            url = "http://sp.ejw.cn/order/v1/partner/" + spId + "/order/" + sp_order_id + "/paystageinfo/" + pay_id
             params = {"nodeSuggest": "服务商不同意退款", "payState": "5", "spEmpId": spEmpId, "spEmpName": "蒋涛",
                       "spPartnerName": "竞网自动化勿删", "refundAmount": refund_Amount, "useCost": "0.00", "refundFee": "0.00"}
             result_act = requests.put(url, data=json.dumps(params), headers=headers).status_code
-            print(result_act)
             result_exp = 200
             self.assertEqual(result_exp, result_act, msg='商家不退款失败')
-            print("商家不同意退款")
+            log.info("工单管理-退款审核-商家不同意退款")
         except TypeError:
-            print("没有找到不退款的订单")
+            log.info("没有找到不退款的订单")
 
     # 方案管理-优惠券管理-新增优惠券
     def test_c014_coupon_add(self):
@@ -487,7 +493,8 @@ class sp_dpgl_01(unittest.TestCase):
         result = requests.post(url, data=json.dumps(params), headers=headers)
         result_exp = 200
         result_act = result.status_code
-        self.assertEqual(result_exp, result_act)
+        self.assertEqual(result_exp, result_act, msg="优惠券新增失败")
+
 
     # 方案管理-优惠券管理-新增优惠码
     # def test_c015_coupon_add(self):
