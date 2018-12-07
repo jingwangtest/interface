@@ -89,22 +89,23 @@ if __name__ == "__main__":
     # if上面是写好的四个函数，一般情况无需修改，只需改if以下的路径参数就行了
     # 测试用例的路径、匹配规则
     # case_path = "F:\\python_script\\interface\\test_case"
-    case_path = os.path.abspath(os.path.join(os.getcwd(), "..", "test_case"))
+    # case_path = os.path.abspath(os.path.join(os.getcwd(), "..", "test_case"))
+    case_path = os.path.abspath(os.path.join(os.getcwd(), "cp"))
     # 匹配规则
     rule = "zpt*.py"
     # 1.加载用例
     all_case = add_case(case_path, rule)
     # 生成测试报告的路径
-    report_path = os.path.abspath(os.path.join(os.getcwd(), "..", "result"))
+    report_path = os.path.abspath(os.path.join(os.getcwd(), "result"))
     # 2.执行用例
     run_case(all_case, report_path)
     #  获取最新的测试报告文件
     report_file = get_report_file(report_path)
-    # #  邮箱配置
-    # sender = 'jtsz2010@163.com'
-    # psw = 'lovejt333'
-    # # 收件人多个时，中间用逗号隔开,如'a@xx.com,b@xx.com'
-    # receiver = 'jtsz2010@163.com,jiangtao@sensefun.com,jiangtao02@hnjing.com,348000842@qq.com'
-    # smtp_server = 'smtp.163.com'
-    # # send_mail(sender, psw, receiver, smtp_server, report_file)
-    # # 4.最后一步发送报告
+    #  邮箱配置
+    sender = 'jtsz2010@163.com'
+    psw = 'lovejt333'
+    # 收件人多个时，中间用逗号隔开,如'a@xx.com,b@xx.com'
+    receiver = 'jtsz2010@163.com', 'jiangtao02@hnjing.com', 'shengxiuling@hnjing.com'
+    smtp_server = 'smtp.163.com'
+    send_mail(sender, psw, receiver, smtp_server, report_file)
+    # 4.最后一步发送报告
