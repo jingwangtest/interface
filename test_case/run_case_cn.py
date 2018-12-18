@@ -7,12 +7,7 @@ from email.mime.multipart import MIMEMultipart
 import smtplib
 import os
 
-
-# import sys
-# reload(sys)
-# sys.setdefaultencoding('utf8')
-# 下面三行代码是python2里面为了防止中文乱码、python3可以去掉
-# 这个是优化版执行所有用例并发送报告，分四个步骤
+# 测试执行所有用例并发送报告，分四个步骤
 # 第一步加载用例
 # 第二步执行用例
 # 第三步获取最新测试报告
@@ -90,16 +85,16 @@ if __name__ == "__main__":
     # 测试用例的路径、匹配规则
     # case_path = "F:\\python_script\\interface\\test_case"
     # case_path = os.path.abspath(os.path.join(os.getcwd(), "..", "test_case"))
-    case_path = os.path.abspath(os.path.join(os.getcwd(), "cp"))
+    case_path = os.path.abspath(os.path.join(os.getcwd()))
     # 匹配规则
-    rule = "zpt*.py"
+    rule = "zpt_admin.py"
     # 1.加载用例
     all_case = add_case(case_path, rule)
     # 生成测试报告的路径
-    report_path = os.path.abspath(os.path.join(os.getcwd(), "result"))
+    report_path = os.path.abspath(os.path.join(os.getcwd(), "..", "result"))
     # 2.执行用例
     run_case(all_case, report_path)
-    #  获取最新的测试报告文件
+    # 3.获取最新的测试报告文件
     report_file = get_report_file(report_path)
     #  邮箱配置
     sender = 'jtsz2010@163.com'
