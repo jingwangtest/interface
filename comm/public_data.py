@@ -137,7 +137,7 @@ class MySQL:
         )
         return conn
 
-    # 连接open_api数据库----主干环境
+    # 连接content_fair数据库----主干环境
     @staticmethod
     def connect_content_fair():
         db_content = localReadConfig.get_db_content()
@@ -147,6 +147,20 @@ class MySQL:
             user=username,
             passwd=password,
             db=db_content,
+            charset=charset
+        )
+        return conn
+
+    # 连接content_fair数据库----主干环境
+    @staticmethod
+    def connect_finance():
+        db_finance = localReadConfig.get_db_finance()
+        conn = pymysql.connect(
+            host=host,
+            port=port,
+            user=username,
+            passwd=password,
+            db=db_finance,
             charset=charset
         )
         return conn

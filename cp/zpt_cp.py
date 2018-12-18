@@ -70,10 +70,6 @@ class Cp(unittest.TestCase):
 
     # 角色权限管理-新增角色
     def test_a003_role_add(self):
-        global log, log_exp, log_act
-        log_exp = Logger(logger="供应商平台_预期结果").getlog()
-        log_act = Logger(logger="供应商平台_实际结果").getlog()
-        log = Logger(logger="供应商平台").getlog()
         name_02 = ''.join(random.sample(['a', 'b', 'c', 'd', 'e', '1', '5', '6', 'x', 'aaa'], 6))
         name_01 = '自动化测试角色'
         Name = name_01 + name_02
@@ -121,6 +117,10 @@ class Cp(unittest.TestCase):
 
     # 产品管理-发布产品
     def test_b001_fbcp(self):
+        global log, log_exp, log_act
+        log_exp = Logger(logger="供应商平台_预期结果").getlog()
+        log_act = Logger(logger="供应商平台_实际结果").getlog()
+        log = Logger(logger="供应商平台").getlog()
         name_02 = ''.join(random.sample(['a', 'b', 'c', 'd', 'e', '1', '5', '6', 'x'], 6))
         name_01 = '供_自动化测试勿删'
         productName = name_01 + name_02

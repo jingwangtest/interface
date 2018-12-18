@@ -1,4 +1,4 @@
-# 运营平台-合作伙伴管理
+# 运营平台
 import requests
 import random
 import json
@@ -8,7 +8,6 @@ from comm.public_data import MySQL
 from comm.Log import Logger
 from urllib.parse import quote
 import readConfig
-
 
 # 请求头信息
 localReadConfig = readConfig.ReadConfig()
@@ -22,6 +21,7 @@ cuComName = localReadConfig.read_cu_com_name()
 cuEmpId = localReadConfig.read_cu_emp_id()
 cuEmpName = localReadConfig.read_cu_emp_name()
 adminEmpId = localReadConfig.read_admin_emp_id()
+
 
 class admin_yygl(unittest.TestCase):
     # 用户运营-合作伙伴管理-新增合作伙伴
@@ -69,7 +69,7 @@ class admin_yygl(unittest.TestCase):
                                                                                               "qualifyBeginDate": "2018-09-30",
                                                                                               "qualifyValidDate": "2018-09-30"}],
             "employees": {"empName": "测试", "phone": "15814405932", "email": "15814405932@139.com"}}
-        url = 'http://admin.ejw.cn/platform/v1/partnerall?curEmpId='+adminEmpId
+        url = 'http://admin.ejw.cn/platform/v1/partnerall?curEmpId=' + adminEmpId
         # 发送服务商接口请求
         qykh_test_01 = requests.post(url, data=json.dumps(paramas), headers=headers)
         print(qykh_test_01.text)
@@ -78,7 +78,6 @@ class admin_yygl(unittest.TestCase):
         # 判断当前返回码及字段值
         self.assertEqual(result_exp, result_act, msg='审核原因：已存在相同用户企业或其它参数错误')
         log.info("企业客户管理-合作伙伴管理-服务商新增成功")
-
 
     # 用户运营-合作伙伴管理-不存在的查询
     def test_a003_search(self):
@@ -162,7 +161,7 @@ class admin_yygl(unittest.TestCase):
                                                              par_result[4]
             print(partner_id, partner_name, area, address, phone)
             url_01 = "http://admin.ejw.cn/platform/v1/partner/"
-            url = url_01 + str(partner_id) + '/audit?curEmpId='+adminEmpId
+            url = url_01 + str(partner_id) + '/audit?curEmpId=' + adminEmpId
             print(url)
             params = {"partner": {"partnerName": partner_name, "area": area, "address": address, "phone": phone,
                                   "detail": "", "partnerType": "0001", "organizeType": 1},
@@ -201,7 +200,7 @@ class admin_yygl(unittest.TestCase):
             record_id = str(cur_data[0])
             paramas = {"status": 5}
             url_01 = 'http://admin.ejw.cn/platform/v1/productauth/'
-            url = url_01 + record_id + '/platformverify?curEmpId='+adminEmpId
+            url = url_01 + record_id + '/platformverify?curEmpId=' + adminEmpId
             # print(url)
             # 发送服务商接口请求
             qykh_test_01 = requests.put(url, data=json.dumps(paramas), headers=headers)
@@ -329,7 +328,7 @@ class admin_yygl(unittest.TestCase):
         product_id = cur_data[1]
         print(verify_id, product_id)
         url_01 = 'http://admin.ejw.cn/platform/v1/productverify/'
-        url = url_01 + verify_id + '?curEmpId='+adminEmpId
+        url = url_01 + verify_id + '?curEmpId=' + adminEmpId
         paramas = {"status": 1}
         result = requests.put(url, data=json.dumps(paramas), headers=headers)
         result_exp = 200
@@ -465,14 +464,15 @@ class admin_yygl(unittest.TestCase):
         try:
             conn = MySQL().connect_platform()
             cur = conn.cursor()
-            sql = "select examine_auth_id from refund_examine where examine_state=0 and order_comp_id="+cuComId
+            sql = "select examine_auth_id from refund_examine where examine_state=0 and order_comp_id=" + cuComId
             cur.execute(sql)
             ordering = cur.fetchone()[0:1]
             examine_auth_id = str(ordering[0])
             print(examine_auth_id)
-            url = "http://admin.ejw.cn/platform/v1/arbitrate/" + examine_auth_id + "?curEmpId="+adminEmpId
+            url = "http://admin.ejw.cn/platform/v1/arbitrate/" + examine_auth_id + "?curEmpId=" + adminEmpId
             params = {"examineState": 1, "examineSuggest": "", "refundAmount": 1, "examineEmpId": int(adminEmpId),
-                      "examineEmpName": cuEmpName, "spOrderStageNo": 1, "orderEmpId": int(cuEmpId), "orderCompId": int(cuComId), "useCost": 0,
+                      "examineEmpName": cuEmpName, "spOrderStageNo": 1, "orderEmpId": int(cuEmpId),
+                      "orderCompId": int(cuComId), "useCost": 0,
                       "refundFee": 0}
             print(params)
             result_act = requests.put(url, data=json.dumps(params), headers=headers)

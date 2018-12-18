@@ -4,6 +4,9 @@ import json
 import random
 from emp.login_emp import Emp
 from comm.public_data import MySQL
+from comm.Log import Logger
+
+log = Logger(logger="EMP").getlog()
 
 # 请求头信息
 token = Emp().emp_login()
@@ -20,7 +23,7 @@ headers = {
     'token': token
 }
 # 操作员工id
-oper_id = '68'
+oper_id = 68
 
 
 class organ01(unittest.TestCase):
@@ -36,31 +39,28 @@ class organ01(unittest.TestCase):
         cur2 = conn.cursor()
         cur2.execute('select partner_id from organ where deleted = 1')
         partner2 = cur2.fetchall()
+        # 获取已授权但未关联机构的企业
         vaules = tuple(set(partner1) - set(partner2))
         partner_id = str(vaules[0][0])
-        print(partner_id)
         # 连接openapi库获取企业名称
         conn = MySQL().connect_open_api()
         cur3 = conn.cursor()
         cur3.execute('select partner_name from os_partner where partner_id = "' + partner_id + '" ')
         partnername = cur3.fetchone()[0]
-        print(partnername)
         shortEname01 = "zidong"
         shortEname02 = ''.join(random.sample(['a', 'b', 'c', 'd', 'e', 'f', 'p', 'u'], 3))
         shortEname = shortEname01 + shortEname02
         shortname = partnername[0:5]
-        print(shortname)
         url = "http://emp.hnjing.com/emp_os/v1/organ"
         params = {"organName": partnername, "sharesType": 0,
                   "oragnShortName": shortname, "oragnShortEname": shortEname, "partnerId": partner_id,
                   "creator": oper_id}
         organ_add = requests.post(url, data=json.dumps(params), headers=headers)
         result_add = json.loads(organ_add.text)
-        print(result_add)
         result = result_add["rowNum"]
         result_exp = 1
         self.assertEqual(result_exp, result)
-        print("新增机构成功")
+        log.info(partnername + "新增机构成功")
 
     # 系统管理-组织管理-机构管理-查询机构
     def test_a002oragn(self):
@@ -70,7 +70,7 @@ class organ01(unittest.TestCase):
         oragn_check = requests.get(url, headers=headers)
         result = oragn_check.text
         self.assertIn(oragnname, result)
-        print("查询成功")
+        log.info(oragnname + "查询成功")
 
     # 系统管理-组织管理-组织架构-新增部门
     def test_b001dept(self):
@@ -83,7 +83,7 @@ class organ01(unittest.TestCase):
         dept_add = requests.post(url, data=json.dumps(params), headers=headers)
         result_add = dept_add.text
         self.assertIn(deptName, result_add)
-        print("新增部门成功")
+        log.info(deptName + " 新增部门成功")
 
     # 系统管理-组织管理-组织架构-删除部门
     def test_b002dept(self):
@@ -95,7 +95,6 @@ class organ01(unittest.TestCase):
         dept = cur.fetchone()[0:2]
         dept_id = str(dept[0])
         dept_name = dept[1]
-        print(dept_id, dept_name)
         url_sc = "http://emp.hnjing.com/emp_os/v1/department/"
         url = url_sc + dept_id
         dept_sc = requests.delete(url, headers=headers)
@@ -103,7 +102,7 @@ class organ01(unittest.TestCase):
         values = result_sc["rowNum"]
         result_exp = 1
         self.assertEqual(result_exp, values)
-        print("部门删除成功")
+        log.info("删除部门成功")
 
     # 系统管理-组织管理-组织架构-编辑部门
     def test_b003dept(self):
@@ -114,7 +113,6 @@ class organ01(unittest.TestCase):
         dept = cur.fetchone()[0:2]
         dept_id = str(dept[0])
         dept_name = dept[1]
-        print(dept_id, dept_name)
         url_bj = "http://emp.hnjing.com/emp_os/v1/department/"
         url = url_bj + dept_id
         # 编辑后名称
@@ -127,7 +125,7 @@ class organ01(unittest.TestCase):
         values = result_bj["rowNum"]
         result_exp = 1
         self.assertEqual(result_exp, values)
-        print("部门编辑成功")
+        log.info(deptName + "编辑部门成功")
 
     # 系统管理-组织管理-组织架构-新增岗位
     def test_c001station(self):
@@ -141,7 +139,7 @@ class organ01(unittest.TestCase):
         values = result_add["rowNum"]
         result_exp = 1
         self.assertEqual(result_exp, values)
-        print("新增岗位成功")
+        log.info(stationName + "新增岗位成功")
 
     # 系统管理-组织管理-组织架构-删除岗位
     def test_c002station(self):
@@ -153,7 +151,6 @@ class organ01(unittest.TestCase):
         stat = cur.fetchone()[0:2]
         stat_id = str(stat[0])
         stat_name = stat[1]
-        print(stat_id, stat_name)
         url_sc = "http://emp.hnjing.com/emp_os/v1/station/"
         url = url_sc + stat_id
         stat_sc = requests.delete(url, headers=headers)
@@ -161,7 +158,7 @@ class organ01(unittest.TestCase):
         values = result_sc["rowNum"]
         result_exp = 1
         self.assertEqual(result_exp, values)
-        print("岗位删除成功")
+        log.info(stat_name + "删除岗位成功")
 
     # 系统管理-组织管理-组织架构-编辑岗位
     def test_c003station(self):
@@ -172,7 +169,6 @@ class organ01(unittest.TestCase):
         station = cur.fetchone()[0:2]
         station_id = str(station[0])
         station_name = station[1]
-        print(station_id, station_name)
         url_bj = "http://emp.hnjing.com/emp_os/v1/station/"
         url = url_bj + station_id
         # 编辑后名称
@@ -182,11 +178,10 @@ class organ01(unittest.TestCase):
         params = {"stationName": stationName, "stationType": "0", "departmentId": 95, "modifier": oper_id}
         station_bj = requests.put(url, data=json.dumps(params), headers=headers)
         result_bj = json.loads(station_bj.text)
-        print(result_bj)
         values = result_bj["rowNum"]
         result_exp = 1
         self.assertEqual(result_exp, values)
-        print("岗位编辑成功")
+        log.info(stationName + "编辑岗位成功")
 
     # 系统管理-组织管理-角色管理-新增角色
     def test_d001role(self):
@@ -199,7 +194,7 @@ class organ01(unittest.TestCase):
         result_add = str(role_add.text)
         result_exp = "添加角色成功"
         self.assertIn(result_exp, result_add)
-        print("新增角色成功")
+        log.info(roleName="新增角色成功")
 
     # 系统管理-组织管理-角色管理-编辑角色（停用角色）
     def test_d002role(self):
@@ -217,7 +212,7 @@ class organ01(unittest.TestCase):
         result_bj = role_bj.text
         result_exp = "修改角色信息成功"
         self.assertIn(result_exp, result_bj)
-        print("停用角色成功")
+        log.info(role_name + "停用角色成功")
 
     # 系统管理-组织管理-角色管理-编辑角色（启用角色）
     def test_d003role(self):
@@ -235,7 +230,7 @@ class organ01(unittest.TestCase):
         result_bj = role_bj.text
         result_exp = "修改角色信息成功"
         self.assertIn(result_exp, result_bj)
-        print("启用角色成功")
+        log.info(role_name + " 启动角色成功")
 
     # 系统管理-组织管理-角色管理-查询角色
     def test_d004role(self):
@@ -246,7 +241,7 @@ class organ01(unittest.TestCase):
         result_check = json.loads(rolecheck.text)
         values = result_check["data"][0]["roleName"]
         self.assertIn(roleName, values)
-        print("查询角色成功")
+        log.info(roleName + "查询角色成功")
 
     # 系统管理-组织管理-员工管理-新增员工（邀请员工）
     def test_e001employ(self):
@@ -263,7 +258,7 @@ class organ01(unittest.TestCase):
         values = result_add["rowNum"]
         result_exp = 1
         self.assertEqual(result_exp, values)
-        print("发送邀请员工邮件")
+        log.info(employeeName + "发送邀请员工邮件")
 
     # 系统管理-组织管理-员工管理-员工离职
     def test_e004employ(self):
@@ -280,7 +275,7 @@ class organ01(unittest.TestCase):
         values = result_del["rowNum"]
         result_exp = 1
         self.assertEqual(result_exp, values)
-        print("员工离职")
+        log.info("员工离职")
 
 
 if __name__ == '__main__':

@@ -2,8 +2,10 @@ import os
 import configparser
 
 proDir = os.path.split(os.path.realpath(__file__))[0]
-configPath = os.path.join(proDir, "config.ini")
-
+# 调用分支配置
+# configPath = os.path.join(proDir, "config.ini")
+# 调用主干配置
+configPath = os.path.join(proDir, "config_150.ini")
 
 class ReadConfig:
     def __init__(self):
@@ -124,6 +126,10 @@ class ReadConfig:
 
     def get_db_content(self):
         value = self.cf.get("DATA", "database_content")
+        return value
+
+    def get_db_finance(self):
+        value = self.cf.get("DATA", "database_finance")
         return value
 
     # ------------ 获取环境变量  ----------

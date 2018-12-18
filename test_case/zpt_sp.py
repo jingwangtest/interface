@@ -159,6 +159,10 @@ class sp_dpgl_01(unittest.TestCase):
 
     # 方案管理-方案管理-发布产品
     def test_c000_product_add(self):
+        # global log, log_exp, log_act
+        # log_exp = Logger(logger="供应商平台_预期结果").getlog()
+        # log_act = Logger(logger="供应商平台_实际结果").getlog()
+        # log = Logger(logger="供应商平台").getlog()
         prodctName_01 = ''.join(random.sample(['8', '6', '3', '2', '5', '6'], 4))
         prodctName_02 = '服务商标准产品发布'
         prodctName = prodctName_02 + prodctName_01
@@ -180,9 +184,10 @@ class sp_dpgl_01(unittest.TestCase):
                   "tempStatus": "1", "spPartnerName": "竞网自动化勿删"}
 
         result_act = requests.post(url, data=json.dumps(params), headers=headers)
-        self.assertIn(prodctName, result_act.text, msg="服务商发布产品失败")
-        log_exp.info(prodctName)
-        log_act.info(result_act)
+        result_exp = 200
+        self.assertEqual(result_exp, result_act.status_code, msg="服务商发布产品失败")
+        log_exp.info(result_exp)
+        log_act.info(result_act.text)
         log.info("服务商发布产品成功")
 
     # 方案管理-方案上架审核提交操作

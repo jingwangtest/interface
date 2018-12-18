@@ -59,8 +59,16 @@ class Cu(unittest.TestCase):
 
     # 外商城商品加入购物车
     def test_b001_shop(self):
+        conn = MySQL.connect_mall()
+        cur = conn.cursor()
+        sql = "select t.product_uuid, t.product_spec_uuid from shoping_info t where t.sp_id=" + spId + " and emp_id=" + \
+              cuEmpId
+        cur.execute(sql)
+        sql_result = cur.fetchone()[0:2]
+        productUuid = sql_result[0]
+        productSpecUuid = sql_result[1]
         url = "http://www.ejw.cn/shopingcart/" + cuComId
-        params = {"productUuid": "01541123570722", "productSpecUuid": "7664A4244A5C4CDE90121211E7BB774E",
+        params = {"productUuid": productUuid, "productSpecUuid": productSpecUuid,
                   "spId": int(spId),
                   "compId": int(cuComId), "empId": int(cuEmpId)}
         result = requests.post(url, data=json.dumps(params), headers=headers).text
